@@ -12,7 +12,9 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones lineales
 - [ ] Cramer
-- [X] Eliminación Gaussiana
+- [ ] Eliminación Gaussiana
+⋅⋅1. [X] Agregado al programa principal
+⋅⋅2. [ ] Probado y funcionando
 - [X] Gauss Jordan c/s Pivoteo
 - [X] Montante
 
