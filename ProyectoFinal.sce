@@ -230,6 +230,11 @@ function EcuacionesLineales()
         disp("5. Montante")
         disp("6. Salir")
         iOpciones = input("Que opción deseas (1-6) ")
+        if (iOpciones == 3) then
+            disp("Ingresa la matrix ")
+            dmatMatriz = LeeMatriz()
+            EliminacionGaussiana(dmatMatriz)
+        end
     end
 endfunction
 
