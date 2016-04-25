@@ -12,9 +12,9 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones lineales
 - [ ] Cramer
-- [ ] Eliminación Gaussiana
-- [ ] Gauss Jordan c/s Pivoteo
-- [ ] Montante
+- [X] Eliminación Gaussiana
+- [X] Gauss Jordan c/s Pivoteo
+- [X] Montante
 
 ### Ajuste de curvas
 - [ ] Regresión Lineal
@@ -28,7 +28,7 @@ Proyecto final de la clase de métodos numéricos
 - [ ] Diferencias dividas de Newton
 
 ### Integración
-- [ ] Trapecio
-- [ ] Simpson 1/3
+- [X] Trapecio
+- [X] Simpson 1/3
 - [ ] Newton-Rapson para ecuaciones no lineales
 
