@@ -5,8 +5,8 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones no lineales
 - [ ] Bisección
-- [ ] Newton-Rapson
-- [ ] Secante
+- [X] Newton-Rapson
+- [X] Secante
 - [ ] Regula Falsi
 - [ ] Birge Vieta
 
@@ -21,7 +21,7 @@ Proyecto final de la clase de métodos numéricos
 - [ ] Regresión Exponencial
 - [ ] Regresión Potencial
 
-- [ ] Inversa por cofactores
+- [X] Inversa por cofactores
 
 ### Interpolación
 - [ ] Lagrange
