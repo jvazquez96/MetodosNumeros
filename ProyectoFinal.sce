@@ -267,7 +267,8 @@ function EcuacionesLineales()
         iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
         if iOpciones ~= 5 then 
             dmatMatriz = LeeMatriz()
-        elseif iOpciones < 5 then
+        end
+        if iOpciones < 5 then
             disp("Menu de opciones")
             disp("1. Cramer")
             disp("2. Eliminación Gaussiana")
