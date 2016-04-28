@@ -112,6 +112,49 @@ function dMatrix = EliminacionGaussiana(dMatrix)
     SustituyeHaciaAtras(dMatrix)
 
 endfunction
+///////////////////////////////////////////////////////////////////////////
+// Método Mondante
+//
+// Método para obtener la solución de un sistema de ecuaciones
+// por el método montante
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+function Montante(dMatValues)
+    //Inicializar el pivote anterior
+    iPivoteAnterior = 1
+    //Numero de renglones
+    iRenglones = size(dMatValues,1)
+    //Numero de columnas
+    iColumnas = size(dMatValues,2)
+     
+    for i = 1: iRenglones
+        for k = 1: iRenglones
+            if k ~= i then
+                for j = i + 1: iColumnas
+                    dMatValues(k,j) = ( dMatValues(i,i) * dMatValues(k,j) - dMatValues(k,i) * dMatValues(i,j)) / iPivoteAnterior
+                end
+                //Hacer ceros en la columna i excepto en el pivote
+                dMatValues(k,i) = 0
+            end
+        end
+        //Actualizar el pivote
+        iPivoteAnterior = dMatValues(i,i)
+        ImprimeMatriz(dMatValues)
+    end
+    //Igualar los pivotes anteriores con el ultimo pivote
+    for i = 1: iRenglones-1
+        dMatValues(i,i) = iPivoteAnterior
+    end
+    ImprimeMatriz(dMatValues)
+    //Dividir cada valor de la ultima columna entre el pivote
+    for i = 1: iRenglones
+        X(i) = dMatValues(i,iColumnas) / iPivoteAnterior
+    end
+    DespliegaArreglo(X)
+    
+endfunction
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -201,7 +244,6 @@ function Menu()
         else
             disp("Opción erronea")
         end
-        input("Teclea enter para continuar")
     end
 endfunction
 
@@ -221,19 +263,23 @@ endfunction
 
 function EcuacionesLineales()
     iOpciones = 0
-    while (iOpciones ~= 6)
-        disp("Menu de opciones")
-        disp("1. Cramer")
-        disp("2. Eliminación Gaussiana")
-        disp("3. Gauss-Jordan")
-        disp("4. Montante")
-        disp("5. Montante")
-        disp("6. Salir")
-        iOpciones = input("Que opción deseas (1-6) ")
-        if (iOpciones == 3) then
-            disp("Ingresa la matrix ")
+    while (iOpciones ~= 5)
+        iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
+        if iOpciones ~= 5 then 
             dmatMatriz = LeeMatriz()
-            EliminacionGaussiana(dmatMatriz)
+        elseif iOpciones < 5 then
+            disp("Menu de opciones")
+            disp("1. Cramer")
+            disp("2. Eliminación Gaussiana")
+            disp("3. Gauss-Jordan")
+            disp("4. Montante")
+            disp("5. Salir")
+            iOpciones = input("Que opción deseas (1-6) ")
+            if (iOpciones == 4) then
+                Montante(dmatMatriz)
+            elseif (iOpciones == 3) then
+                EliminacionGaussiana(dmatMatriz)
+                end
         end
     end
 endfunction
