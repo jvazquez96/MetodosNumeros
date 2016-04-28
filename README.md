@@ -42,10 +42,10 @@ Proyecto final de la clase de métodos numéricos
     * [X] Lo tenemos hecho
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
-- [ ] Montante
+- [X] Montante
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 ### Ajuste de curvas
 - [ ] Regresión Lineal
