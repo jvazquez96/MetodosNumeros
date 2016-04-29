@@ -230,12 +230,125 @@ endfunction
 //  para la matriz inicial
 //
 //  Parametros:
-//     dArr: El arreglo con las soluciones a las incógnitas
+//     darrX: El arreglo con las soluciones a las incógnitas
 ///////////////////////////////////////////////////////////////////////////
-function DespliegaArreglo(dArr)
-    for i = 1: size(dArr,1)
-        disp(string(dArr(i,1)))
+function DespliegaArreglo(darrX)
+    for i = 1: size(darrX, 1)
+        disp(string(darrX(i, 1)))
     end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
+// Secante: Solución de una Raíz de Una Ecuación No Lineal
+//
+//  Programa de Solución de una Raíz de Una Ecuación No Lineal
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  CalculaSecante()
+//
+//  Pide una ecuación no lineal y calcula la solución de su raíz
+//
+/////////////////////////////////////////////////////////////////////
+function CalculaSecante()
+    // Solicita la función a ser resuelta y la declara como funcionSecante
+    LeeFuncion("FuncionSecante")
+
+    // Lee los datos iniciales
+    [dXPrev, dXAct, dErrAbsMeta, iMaxIter] = leeDatosSecante()
+
+    // Calcula las iteraciones para calcular las raices
+    IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter)
+
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  IteraSecante()
+//
+//  Realiza las iteraciones para calcular la solución a la ecuación
+//  no lineal por medio del método de la secante.
+//
+/////////////////////////////////////////////////////////////////////
+function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter)
+    // Calcula la primera iteración y la despliega
+    dXSig = IteraX(dXPrev, dXAct)
+
+    // Obtiene el valor de la función evaluada con X = dXSig
+    dEval = FuncionSecante(dXSig)
+    disp(" Iteración #" + string(iIterAct) + ":")
+    disp(" X: " + string(dXSig))
+
+    // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
+    // límite
+    while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
+        dXPrev = dXAct
+        dXAct = dXSig
+        dXSig = IteraX(dXPrev, dXAct)
+        dEval = EvaluaX(dXSig)
+        iIterAct = iIterAct + 1
+        // Calcula el error absoluto porcentual actual
+        dErrAbsAct = CalculaErrAbs(dXSig, dXAct)
+        disp(" Iteración #" + string(iIterAct) + ":")
+        disp(" X: " + string(dXSig))
+        disp(" Error absoluto: " + string(dErrAbsAct) + "%")
+    end
+
+    // Imprime la forma en la que se obtuvo la raiz dependiendo de cual
+    // haya sido el límite alcanzado
+    if iIterAct >= iMaxIter then
+        disp(" La raiz fue aproximada con el numero de iteraciones dado")
+    elseif dErrAbsAct <= dErrAbsMeta then
+        disp(" La raiz fue aproximada con el error absoluto porcentual")
+    elseif dEval == 0 then
+        disp(" La raiz encontrada fue exacta")
+    end
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  leeDatosSecante()
+//      Regresa:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+/////////////////////////////////////////////////////////////////////
+function [dXPrev, dXAct, dErrAbsMeta, iMaxIter] = leeDatosSecante()
+
+    // Solicita el valor inicial para x previa y x actual, el error
+    // absoluto en valor porcentual y el numero maximo de iteraciones
+    dXPrev = input(" Ingrese el valor de X previo: ")
+    dXAct = input(" Ingrese el valor de X actual: ")
+    dErrAbsMeta = input(" Ingrese el valor del error absoluto: ")
+    iMaxIter = input(" Ingrese el valor máximo de iteraciones: ")
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  IteraX
+//
+//  Realiza una iteración utilizando el método de la Secante con los
+//  valores recibidos de dXPrev y dXAct y regresa el valor de dXSig.
+//
+//  Parametros:
+//     dXPrev    el valor de previo de x
+//     dXAct     el valor actual de x
+//  Regresa:
+//     dXSig     el siguiente valor de x
+/////////////////////////////////////////////////////////////////////
+function [dXSig] = IteraX(dXPrev, dXAct)
+    // Obtiene los valores de la función evaluada en dX
+    dYPrev = FuncionSecante(dXPrev)
+    dYAct = FuncionSecante(dXAct)
+
+    // Calcula el siguiente valor de x
+    dXSig = dXAct - (dYAct * (dXPrev - dXAct)) / (dYPrev - dYAct)
 endfunction
 
 
