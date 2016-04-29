@@ -42,6 +42,10 @@ function dmatValores = LeeMatriz()
             dmatValores(iT, iJ) = input(sTexto + string(iJ) + "):  ")
         end
     end
+
+    // Imprime los valores leidos de la matriz
+    disp('Matriz leída: ');
+    ImprimeMatriz(dmatValores)
 endfunction
 
 
@@ -128,6 +132,22 @@ endfunction
 
 
 ///////////////////////////////////////////////////////////////////////////
+//  DespliegaArreglo()
+//
+//  Función que despliega los valores de las soluciones encontradas
+//  para la matriz inicial
+//
+//  Parametros:
+//     darrX: El arreglo con las soluciones a las incógnitas
+///////////////////////////////////////////////////////////////////////////
+function DespliegaArreglo(darrX)
+    for i = 1: size(darrX, 1)
+        disp(string(darrX(i, 1)))
+    end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
 // Eliminacion Gaussiana
 //
 // Método para obtener la solución de un sistema de ecuaciones
@@ -147,36 +167,144 @@ endfunction
 //              1.1.2  Para j desde i hasta columnas
 //                  1.1.2.1  M(k, j) = M(k, j) + factor * M(i, j)
 //
+//  Parametros:
+//     dmatValores: La matriz original a ser procesada
+//
 ///////////////////////////////////////////////////////////////////////////
-function EliminacionGaussiana()
-    // Pide al usuario la matriz a ser utilizada
-    dmatMatriz = LeeMatriz()
+function EliminacionGaussiana(dmatValores)
     iFactor = 0
     //Tamaño de los renglones
-    iRenglones = size(dmatMatriz,1)
+    iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
-    iColumnas = size(dmatMatriz,2)
+    iColumnas = size(dmatValores,2)
     for i = 1: iRenglones - 1
         for k = i + 1: iRenglones
-            iFactor =  dmatMatriz(k,i) / dmatMatriz(i,i)
+            iFactor =  dmatValores(k,i) / dmatValores(i,i)
             disp("Factor: "+ string(iFactor))
             for j = i: iColumnas
-                dmatMatriz(k,j) = dmatMatriz(k,j) - iFactor*dmatMatriz(i,j)
+                dmatValores(k,j) = dmatValores(k,j) - iFactor*dmatValores(i,j)
             end
         end
     end
     // Imprimir la matriz en el estado reducido
-    ImprimeMatriz(dmatMatriz)
+    ImprimeMatriz(dmatValores)
 
     // Encontrar los valores de las incógnitas
-    darrX = SustituyeHaciaAtras(dmatMatriz)
+    darrX = SustituyeHaciaAtras(dmatValores)
 
     // Despliega el arreglo de las soluciones encontradas
     DespliegaArreglo(darrX)
 
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
-// Método Mondante
+// Eliminacion Gauss-Jordan
+//
+// Método para obtener la solución de un sistema de ecuaciones mediante
+// el método de Gauss-Jordan
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+//  EliminacionGaussJordan()
+//
+//  Función realiza la eliminación Gauss-Jordan en una matriz recibida
+//  utilizando el siguiente algoritmo:
+// 1. Para cada renglon i
+//      1.1 pivote = A(i,i)
+//      1.2 Para cada columna j
+//         1.2.1   A(i,j) = A(i,j) / pivote
+//      1.3 Para cada renglon k
+//          1.3.1  Si i <> k
+//              1.3.1.1  fact = - A(k,i)
+//              1.3.1.2   Para cada columna j
+//                  1.3.1.2.1 A(k,j) = A(k,j) + fact * A(i,j)
+//      1.4 Desplegar matriz
+//
+//  Parametros:
+//     dmatValores: La matriz original a ser procesada
+//
+///////////////////////////////////////////////////////////////////////////
+function EliminacionGaussJordan(dmatValores)
+    iFactor = 0
+    //Tamaño de los renglones
+    iRenglones = size(dmatValores,1)
+    //Tamaño de las columnas
+    iColumnas = size(dmatValores,2)
+
+    for i = 1: iRenglones
+        dPivote = dmatValores(i, i)
+        // Si el renglon no empieza con cero
+        if(dPivote <> 0) then
+            // Dividir todo el renglon entre el primer elemento
+            // Así convierte el primer elemento a un uno
+            dPrimerElemento = dmatValores(i,i)
+            for j = i: iColumnas
+                dmatValores(i,j) = dmatValores(i,j) / dPrimerElemento
+            end
+
+            // Hace ceros arriba y abajo de ese uno
+            for k = 1: iRenglones
+                // Si el actual no es el renglon pivote
+                if(k <> i) then
+                    // Calcula el factor del primer elemento con el pivote
+                    dFactor =  dmatValores(k,i) / dmatValores(i,i)
+                    // Resta el factor * celda para hacer 0 el primer elemento
+                    for j = 1: iColumnas
+                        dMult = dFactor * dmatValores(i,j)
+                        dmatValores(k,j) = dmatValores(k,j) - dMult
+                    end
+                end
+            end
+        end
+        // Imprimir la matriz en el número de iteración actual
+        disp('Iteración #' + string(i));
+        ImprimeMatriz(dmatValores)
+    end
+
+    // Imprime la matriz en el estado reducido
+    disp('Matriz después de la eliminación Gauss-Jordan: ');
+    ImprimeMatriz(dmatValores)
+
+    // Encuentra los valores de las incógnitas
+    disp('Soluciones a las incógnitas son: ');
+    ExtraeSoluciones(dmatValores)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  ExtraeSoluciones()
+//
+//  Función extrae las soluciones de una matriz reducidad por Gauss-Jordan
+//  y las coloca en un arreglo de soluciones
+//
+//  Parametros:
+//     dmatValores: La matriz ya procesada con el método de gauss-jordan
+/////////////////////////////////////////////////////////////////////
+function  ExtraeSoluciones(dmatValores)
+    //Cantidad de renglones
+    iRenglones= size(dmatValores,1)
+
+    //Cantida de columnas
+    iColumnas = size(dmatValores,2)
+
+    // Copiar soluciones a arreglo auxiliar
+    for i = 1 : iRenglones
+        darrAux(i) = dmatValores(i, iColumnas)
+    end
+
+    // Despliega el arreglo de las soluciones encontradas
+    DespliegaArreglo(darrAux)
+
+endfunction
+
+
+
+///////////////////////////////////////////////////////////////////////////
+// Método Montante
 //
 // Método para obtener la solución de un sistema de ecuaciones
 // por el método montante
@@ -261,44 +389,28 @@ endfunction
 //          2.3 X(i) = (M(i, columnas) - Suma) / M(i,i)
 //
 //  Parametros:
-//      dMatValues: La matriz ya procesada con la eliminación de gauss
+//      dmatValores: La matriz ya procesada con la eliminación de gauss
 ///////////////////////////////////////////////////////////////////////////
-function [darrX] = SustituyeHaciaAtras(dMatValues)
+function [darrX] = SustituyeHaciaAtras(dmatValores)
     //Cantidad de renglones
-    iRenglones= size(dMatValues,1)
+    iRen = size(dmatValores,1)
 
     //Cantida de columnas
-    iColumnas = size(dMatValues,2)
+    iCol = size(dmatValores,2)
 
     iSuma = 0
     //Obtener la primera solución
-    darrX(iRenglones,1) = dMatValues(iRenglones,iColumnas)/dMatValues(iRenglones,iRenglones)
+    darrX(iRen, 1) = dmatValores(iRen, iCol) / dmatValores(iRen, iRen)
     // Para cada renglon
-    for i = iRenglones - 1: -1:1
+    for i = iRen - 1: -1:1
         iSuma = 0;
         // Para cada columna
-        for j = iColumnas - 1:-1:i+1
-            iSuma = iSuma + dMatValues(i,j) * darrX(j);
+        for j = iCol - 1:-1:i+1
+            iSuma = iSuma + dmatValores(i,j) * darrX(j);
         end
-        darrX(i) = (dMatValues(i,iColumnas) - iSuma) / dMatValues(i,i)
+        darrX(i) = (dmatValores(i,iCol) - iSuma) / dmatValores(i,i)
     end
 
-endfunction
-
-
-///////////////////////////////////////////////////////////////////////////
-//  DespliegaArreglo()
-//
-//  Función que despliega los valores de las soluciones encontradas
-//  para la matriz inicial
-//
-//  Parametros:
-//     darrX: El arreglo con las soluciones a las incógnitas
-///////////////////////////////////////////////////////////////////////////
-function DespliegaArreglo(darrX)
-    for i = 1: size(darrX, 1)
-        disp(string(darrX(i, 1)))
-    end
 endfunction
 
 
