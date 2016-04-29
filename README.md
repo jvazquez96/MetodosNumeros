@@ -35,20 +35,20 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
 
-- [ ] Eliminación Gaussiana
-    * [ ] Lo tenemos hecho
+- [X] Eliminación Gaussiana
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
 - [ ] Gauss Jordan c/s Pivoteo
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Agregado al programa principal // Falta sin pivoteo
     * [ ] Probado y funcionando
 
 - [X] Montante
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [X] Probado y funcionando
+    * [ ] Probado y funcionando // Se queda congelado a veces
 
 ### Ajuste de curvas
 - [ ] Regresión Lineal
