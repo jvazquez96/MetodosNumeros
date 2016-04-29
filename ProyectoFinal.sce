@@ -64,7 +64,74 @@ function ImprimeMatriz(dMatrix)
     end
 endfunction
 
+function ImprimeMatriz(dMat)
+    // Para cada renglon
+    for iT = 1 : size(dMat,1)
+        sLinea = ""
+        // Para cada columna
+        for iJ = 1: size(dMat, 2)
+            // Cuando es el último elemento, no imprime coma
+            if(iJ <> size(dMat, 2))
+                sLinea = sLinea + string(dMat(iT, iJ)) + ", "
+            else
+                sLinea = sLinea + string(dMat(iT, iJ))
+            end
+        end
+        disp(sLinea)
+    end
+endfunction
 
+
+/////////////////////////////////////////////////////////////////////
+//
+//  LeeFuncion()
+//
+//  Pide y declara una función ingresada por el usuario con el nombre
+//  recibido en el parámentro sNombreFunción
+//      Parametros:
+//          sNombreFuncion: El nombre que tendrá la función ingresada
+//
+/////////////////////////////////////////////////////////////////////
+function LeeFuncion(sNombreFuncion)
+    // Lee la función a ser utilizada
+    disp(" Ingrese la función a ser utilizada:");
+    sFunc = input("--> ", "string")
+
+    // Convierte cada letra ingresada en minúsculas
+    convstr(sFunc,"l")
+
+    // Serie de reglas para manejar funciones ingresadas en otros formatos,
+    if(strstr(sFunc,"y=") == "" & strstr(sFunc,'y =') == "") then
+        // En caso de que el usuario ingrese una función de la forma f(x)='..
+        if(strstr(sFunc,'f(x)=') <> "" ) then
+            sFunc = part(sFunc, 6:length(sFunc))
+        elseif(strstr(sFunc,'f(x) =') <> "" ) then
+            sFunc = part(sFunc, 7:length(sFunc))
+        end
+        sFunc = "y=" +  sFunc
+    end
+
+    // Declarar la funcion con el nombre especificado
+    deff('y=' + sNombreFuncion + '(x)', sFunc)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  CalculaErrAbs
+//
+//  Calcula el error absoluto porcentual dado un valor de la
+//  aproximación actual y la aproximación anterior
+//
+//  Parámetros:
+//     dPrev    el valor de la aproximación anterior
+//     dAct     el valor de la aproximación actual
+//  Reegresa:
+//     dAprox   el valor de la nueva aproximación
+///////////////////////////////////////////////////////////////////////////
+function [dAprox] = CalculaErrAbs(dPrev, dAct)
+    dAprox = ((dAct - dPrev) / dAct) * 100
+endfunction
 
 
 ///////////////////////////////////////////////////////////////////////////
