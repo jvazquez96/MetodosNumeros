@@ -16,7 +16,7 @@ Proyecto final de la clase de métodos numéricos
 
 - [ ] Secante
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 - [ ] Regula Falsi
@@ -34,14 +34,17 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Lo tenemos hecho
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
+
 - [ ] Eliminación Gaussiana
     * [ ] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [ ] Probado y funcionando
+
 - [ ] Gauss Jordan c/s Pivoteo
     * [X] Lo tenemos hecho
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
+
 - [X] Montante
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
@@ -57,6 +60,7 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Lo tenemos hecho
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
+
 - [ ] Regresión Potencial
     * [ ] Lo tenemos hecho
     * [ ] Agregado al programa principal
