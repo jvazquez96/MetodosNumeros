@@ -60,7 +60,7 @@ endfunction
 function ImprimeMatriz(dmatValores)
     // Para cada renglon
     for iT = 1 : size(dmatValores,1)
-        sLinea = ""
+        sLinea = "    "
         // Para cada columna
         for iJ = 1: size(dmatValores, 2)
             // Cuando es el último elemento, no imprime coma
@@ -142,8 +142,9 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 function DespliegaArreglo(darrX)
     for i = 1: size(darrX, 1)
-        disp(string(darrX(i, 1)))
+        disp("   " + string(darrX(i, 1)))
     end
+    disp("")
 endfunction
 
 
@@ -172,6 +173,9 @@ endfunction
 //
 ///////////////////////////////////////////////////////////////////////////
 function EliminacionGaussiana(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por medio de la Eliminación Gaussiana"
+    disp("--------------- " + sTitulo + " ---------------")
     iFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
@@ -193,6 +197,7 @@ function EliminacionGaussiana(dmatValores)
     darrX = SustituyeHaciaAtras(dmatValores)
 
     // Despliega el arreglo de las soluciones encontradas
+    disp('Las soluciones a las incógnitas son: ');
     DespliegaArreglo(darrX)
 
 endfunction
@@ -228,6 +233,9 @@ endfunction
 //
 ///////////////////////////////////////////////////////////////////////////
 function EliminacionGaussJordan(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por medio de la Eliminación Gauss-Jordan"
+    disp("--------------- " + sTitulo + " ---------------")
     iFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
@@ -269,7 +277,7 @@ function EliminacionGaussJordan(dmatValores)
     ImprimeMatriz(dmatValores)
 
     // Encuentra los valores de las incógnitas
-    disp('Soluciones a las incógnitas son: ');
+    disp('Las soluciones a las incógnitas son: ');
     ExtraeSoluciones(dmatValores)
 
 endfunction
@@ -297,6 +305,7 @@ function  ExtraeSoluciones(dmatValores)
     end
 
     // Despliega el arreglo de las soluciones encontradas
+    disp('Las soluciones a las incógnitas son: ');
     DespliegaArreglo(darrAux)
 
 endfunction
@@ -338,6 +347,9 @@ endfunction
 //     dmatValores: La matriz original a ser procesada
 ///////////////////////////////////////////////////////////////////////////
 function Montante(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por medio del método Montante"
+    disp("--------------- " + sTitulo + " ---------------")
     //Inicializar el pivote anterior
     iPivoteAnterior = 1
     //Numero de renglones
@@ -400,7 +412,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
 
     iSuma = 0
     //Obtener la primera solución
-    darrX(iRen, 1) = dmatValores(iRen, iCol) / dmatValores(iRen, iRen)
+    if dmatValores(iRen, iRen) ~= 0
+        darrX(iRen, 1) = dmatValores(iRen, iCol) / dmatValores(iRen, iRen)
+    end
     // Para cada renglon
     for i = iRen - 1: -1:1
         iSuma = 0;
@@ -408,7 +422,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
         for j = iCol - 1:-1:i+1
             iSuma = iSuma + dmatValores(i,j) * darrX(j);
         end
-        darrX(i) = (dmatValores(i,iCol) - iSuma) / dmatValores(i,i)
+        if dmatValores(i,i) ~= 0
+            darrX(i) = (dmatValores(i,iCol) - iSuma) / dmatValores(i,i)
+        end
     end
 
 endfunction
@@ -546,7 +562,7 @@ function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
-        disp(ascii(10) + ascii(10))
+        disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp("=================== Menu de opciones ===================")
         disp("1. Solución de ecuaciones no lineales")
         disp("2. Solución de ecuaciones lineales")
@@ -554,7 +570,7 @@ function Menu()
         disp("4. Interpolación")
         disp("5. Integración")
         disp("6. Salir")
-        iOpciones = input("Que opción deseas (1-6) --> ")
+        iOpciones = input(" Qué opción deseas (1-6) --> ")
         if (iOpciones == 1) then
             EcuacionesNoLineales()
         elseif (iOpciones == 2) then
@@ -573,39 +589,57 @@ function Menu()
     end
 endfunction
 
+
 function EcuacionesNoLineales()
     iOpciones = 0
     while(iOpciones  ~=  6)
         disp(ascii(10) + ascii(10))
-        disp("=================== Menu de opciones ===================")
+        sTitulo = "Solución de ecuaciones no lineales"
+        disp("================ " + sTitulo + " ================")
         disp("1. Bisección")
         disp("2. Newton-Rapson")
         disp("3. Secante")
         disp("4. Regula Falsi")
         disp("5. Birge Vieta")
         disp("6. Salir")
-        iOpciones = input("Que opción deseas (1-6) --> ")
+        iOpciones = input(" Qué opción deseas (1-6) --> ")
         if (iOpciones == 3) then
             CalculaSecante()
         end
     end
 endfunction
 
+
 function EcuacionesLineales()
     iOpciones = 0
+    bPrimeraVez = %T
     while (iOpciones ~= 5)
-        iOpciones = input("Ingresa la matriz, si deseas salir teclea 5 --> ")
-        if iOpciones ~= 5 then
+        sMensaje = ""
+        // Desplegar un mensaje diferente para la segunda vez que entre
+        if(bPrimeraVez == %T)
+            sMensaje = "Presiona enter para ingresar una matriz "
+        else
+            sMensaje = "Persiona 1 si deseas ingresar una matriz diferente, 2 "
+            sMensaje = sMensaje + "si deseas usar la matriz anterior de nuevo "
+        end
+        iOpciones = input(sMensaje +  "o 5 si deseas regresar --> ")
+        // Para permitir al usuario ingresar una matriz en todos los casos
+        // En la primera vez, forzosamente se tiene que leer la matriz
+        if(iOpciones ~= 5 & iOpciones ~= 2 | bPrimeraVez)
             dmatValores = LeeMatriz()
-        elseif iOpciones < 5 then
+        end
+
+        if iOpciones ~= 5 then
+            bPrimeraVez = %F
             disp(ascii(10) + ascii(10))
-            disp("=================== Menu de opciones ===================")
+            sTitulo = "Solución de sistemas de ecuaciones lineales"
+            disp("================ " + sTitulo + " ================")
             disp("1. Cramer")
             disp("2. Eliminación Gaussiana")
             disp("3. Gauss-Jordan")
             disp("4. Montante")
             disp("5. Salir")
-            iOpciones = input("Que opción deseas (1-6) --> ")
+            iOpciones = input(" Qué opción deseas (1-5) --> ")
 
             if (iOpciones == 2) then
                 EliminacionGaussJordan(dmatValores)
@@ -618,45 +652,52 @@ function EcuacionesLineales()
     end
 endfunction
 
+
 function AjusteDeCurvas()
     iOpciones = 0
     while (iOpciones ~= 5)
         disp(ascii(10) + ascii(10))
-        disp("=================== Menu de opciones ===================")
+        sTitulo = "Ajuste de curvas"
+        disp("================ " + sTitulo + " ================")
         disp("1. Regresión Lineal")
         disp("2. Regresión Exponencial")
         disp("3. Regresión Potencial")
         disp("4. Inversa por Cofactores")
         disp("5. Salir")
-        iOpciones = input("Que opción deseas (1-6) --> ")
+        iOpciones = input(" Qué opción deseas (1-6) --> ")
     end
 endfunction
+
 
 function Interpolacion()
     iOpciones = 0
     while (iOpciones ~= 3)
         disp(ascii(10) + ascii(10))
-        disp("=================== Menu de opciones ===================")
+        sTitulo = "Interpolación"
+        disp("================ " + sTitulo + " ================")
         disp("1. Lagrange")
         disp("2. Diferencias Divididas de Newton")
         disp("3. Salir")
-        iOpciones = input("Que opción deseas (1-3) --> ")
+        iOpciones = input(" Qué opción deseas (1-3) --> ")
     end
 endfunction
+
 
 function Integracion()
     iOpciones = 0
     while (iOpciones ~= 4)
         disp(ascii(10) + ascii(10))
-        disp("=================== Menu de opciones ===================")
+        sTitulo = "Integración"
+        disp("================ " + sTitulo + " ================")
         disp("1. Trapecio")
         disp("2. Simpson 1/3")
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
-        iOpciones = input("Que opción deseas (1-4) --> ")
+        iOpciones = input(" Qué opción deseas (1-4) --> ")
 
     end
 
 endfunction
+
 
 Menu()
