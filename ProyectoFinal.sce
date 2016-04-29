@@ -28,9 +28,9 @@ clear
 //  Función que introduce los datos a una matriz de tamaño N*M
 //
 //  Retorno:
-//     dmatMatriz: Matriz con los datos del usuario
+//     dmatValores: Matriz con los datos del usuario
 ///////////////////////////////////////////////////////////////////////////
-function dmatMatriz = LeeMatriz()
+function dmatValores = LeeMatriz()
     // Lee las dimensiones de la matriz
     iRow = input("Ingrese el número de renglones: ")
     iCol = input("Ingrese el número de columnas: ")
@@ -39,7 +39,7 @@ function dmatMatriz = LeeMatriz()
         // Para cada columna
         for iJ = 1 : iCol
             sTexto = "Ingrese el elemento:   (" + string(iT) + ", "
-            dmatMatriz(iT, iJ) = input(sTexto + string(iJ) + "):  ")
+            dmatValores(iT, iJ) = input(sTexto + string(iJ) + "):  ")
         end
     end
 endfunction
@@ -53,17 +53,17 @@ endfunction
 //  Parametros:
 //     dMatrix: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
-function ImprimeMatriz(dmatMatriz)
+function ImprimeMatriz(dmatValores)
     // Para cada renglon
-    for iT = 1 : size(dmatMatriz,1)
+    for iT = 1 : size(dmatValores,1)
         sLinea = ""
         // Para cada columna
-        for iJ = 1: size(dmatMatriz, 2)
+        for iJ = 1: size(dmatValores, 2)
             // Cuando es el último elemento, no imprime coma
-            if(iJ <> size(dmatMatriz, 2))
-                sLinea = sLinea + string(dmatMatriz(iT, iJ)) + ", "
+            if(iJ <> size(dmatValores, 2))
+                sLinea = sLinea + string(dmatValores(iT, iJ)) + ", "
             else
-                sLinea = sLinea + string(dmatMatriz(iT, iJ))
+                sLinea = sLinea + string(dmatValores(iT, iJ))
             end
         end
         disp(sLinea)
@@ -184,37 +184,64 @@ endfunction
 // version 1.0
 ///////////////////////////////////////////////////////////////////////////
 
-function Montante(dMatValues)
+///////////////////////////////////////////////////////////////////////////
+//  Montante()
+//
+//  Función realiza la eliminación montante en una matriz recibida
+//  utilizando el siguiente algoritmo:
+// 1.     PivoteAnterior = 1
+// 2.     Para cada renglon i desde 1 hasta numero de renglones
+//  2.1    Para cada renglon k desde 1 hasta el numero de renglones
+//      2.1.1   Si k es diferente a la i
+//          2.1.1.1  Para cada columna j desde i + 1 hasta numero de columnas
+//              2.1.1.1.1 M(k,j) = (M(i,i)*M(k,j)-M(k,i)*M(i,j))/PivoteAnterior
+//          2.1.1.2   M(k,i) = 0
+//  2.2    PivoteAnterior = M(i,i)
+//  2.3    Despliega M
+// 3. Para cada renglon i desde 1 hasta Renglones -1
+//      M(i, i) = PivoteAnterior
+// 4. Despliega M
+// 5. Para cada renglon i desde 1 hasta Renlones
+//      X(i) = m(i,i) / pivoteAnterior
+// 6.  Despliega X
+//  2.3.1  M(k,k) = M(i,i)
+//
+//  Parametros:
+//     dmatValores: La matriz original a ser procesada
+///////////////////////////////////////////////////////////////////////////
+function Montante(dmatValores)
     //Inicializar el pivote anterior
     iPivoteAnterior = 1
     //Numero de renglones
-    iRenglones = size(dMatValues,1)
+    iRenglones = size(dmatValores,1)
     //Numero de columnas
-    iColumnas = size(dMatValues,2)
+    iColumnas = size(dmatValores,2)
 
     for i = 1: iRenglones
         for k = 1: iRenglones
             if k ~= i then
                 for j = i + 1: iColumnas
-                    dMatValues(k,j) = ( dMatValues(i,i) * dMatValues(k,j) - dMatValues(k,i) * dMatValues(i,j)) / iPivoteAnterior
+                    dmatValores(k,j) = ( dmatValores(i,i) * dmatValores(k,j) - dmatValores(k,i) * dmatValores(i,j)) / iPivoteAnterior
                 end
                 //Hacer ceros en la columna i excepto en el pivote
-                dMatValues(k,i) = 0
+                dmatValores(k,i) = 0
             end
         end
         //Actualizar el pivote
-        iPivoteAnterior = dMatValues(i,i)
-        ImprimeMatriz(dMatValues)
+        iPivoteAnterior = dmatValores(i,i)
+        ImprimeMatriz(dmatValores)
     end
     //Igualar los pivotes anteriores con el ultimo pivote
     for i = 1: iRenglones-1
-        dMatValues(i,i) = iPivoteAnterior
+        dmatValores(i,i) = iPivoteAnterior
     end
-    ImprimeMatriz(dMatValues)
+    ImprimeMatriz(dmatValores)
     //Dividir cada valor de la ultima columna entre el pivote
     for i = 1: iRenglones
-        X(i) = dMatValues(i,iColumnas) / iPivoteAnterior
+        X(i) = dmatValores(i,iColumnas) / iPivoteAnterior
     end
+    // Despliega las soluciones de los valores a las incógnitas
+    disp('Soluciones a las incógnitas son: ');
     DespliegaArreglo(X)
 
 endfunction
