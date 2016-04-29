@@ -14,10 +14,10 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Agregado al programa principal
     * [ ] Probado y funcionando
 
-- [ ] Secante
+- [X] Secante
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
 - [ ] Regula Falsi
     * [ ] Lo tenemos hecho

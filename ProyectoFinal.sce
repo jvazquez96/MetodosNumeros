@@ -38,7 +38,7 @@ function dmatMatriz = LeeMatriz()
     for iT = 1 : iRow
         // Para cada columna
         for iJ = 1 : iCol
-            sTexto = "Ingrese el elemento:   ("  + string(iT) + ", "
+            sTexto = "Ingrese el elemento:   (" + string(iT) + ", "
             dmatMatriz(iT, iJ) = input(sTexto + string(iJ) + "):  ")
         end
     end
@@ -53,29 +53,17 @@ endfunction
 //  Parametros:
 //     dMatrix: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
-function ImprimeMatriz(dMatrix)
-    // Para cada renglón
-    for iT = 1 : size(dMatrix,1)
-        sLinea = ""
-        // Para cada columna
-        for iJ = 1: size(dMatrix, 2)
-           sLinea = sLinea + string(dMatrix(iT, iJ)) + " , "
-        end
-        disp(sLinea)
-    end
-endfunction
-
-function ImprimeMatriz(dMat)
+function ImprimeMatriz(dmatMatriz)
     // Para cada renglon
-    for iT = 1 : size(dMat,1)
+    for iT = 1 : size(dmatMatriz,1)
         sLinea = ""
         // Para cada columna
-        for iJ = 1: size(dMat, 2)
+        for iJ = 1: size(dmatMatriz, 2)
             // Cuando es el último elemento, no imprime coma
-            if(iJ <> size(dMat, 2))
-                sLinea = sLinea + string(dMat(iT, iJ)) + ", "
+            if(iJ <> size(dmatMatriz, 2))
+                sLinea = sLinea + string(dmatMatriz(iT, iJ)) + ", "
             else
-                sLinea = sLinea + string(dMat(iT, iJ))
+                sLinea = sLinea + string(dmatMatriz(iT, iJ))
             end
         end
         disp(sLinea)
@@ -91,29 +79,33 @@ endfunction
 //  recibido en el parámentro sNombreFunción
 //      Parametros:
 //          sNombreFuncion: El nombre que tendrá la función ingresada
+//      Retorno:
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
-function LeeFuncion(sNombreFuncion)
+function [sArgDeff1, sArgDeff2] = LeeFuncion(sNombreFuncion)
     // Lee la función a ser utilizada
-    disp(" Ingrese la función a ser utilizada:");
+    disp("Ingrese la función a ser utilizada:");
     sFunc = input("--> ", "string")
 
     // Convierte cada letra ingresada en minúsculas
     convstr(sFunc,"l")
 
     // Serie de reglas para manejar funciones ingresadas en otros formatos,
-    if(strstr(sFunc,"y=") == "" & strstr(sFunc,'y =') == "") then
+    if(strstr(sFunc,"y=") == ""& strstr(sFunc,'y =') == "") then
         // En caso de que el usuario ingrese una función de la forma f(x)='..
-        if(strstr(sFunc,'f(x)=') <> "" ) then
+        if(strstr(sFunc,'f(x)=') <> "") then
             sFunc = part(sFunc, 6:length(sFunc))
-        elseif(strstr(sFunc,'f(x) =') <> "" ) then
+        elseif(strstr(sFunc,'f(x) =') <> "") then
             sFunc = part(sFunc, 7:length(sFunc))
         end
-        sFunc = "y=" +  sFunc
+        sFunc = "y="+  sFunc
     end
 
-    // Declarar la funcion con el nombre especificado
-    deff('y=' + sNombreFuncion + '(x)', sFunc)
+    // Establece los argumentos para declarar la funcion con deff
+    sArgDeff1 = 'y=' + sNombreFuncion + '(x)'
+    sArgDeff2 = sFunc
 
 endfunction
 
@@ -167,7 +159,7 @@ function EliminacionGaussiana()
     for i = 1: iRenglones - 1
         for k = i + 1: iRenglones
             iFactor =  dmatMatriz(k,i) / dmatMatriz(i,i)
-            disp("Factor: " + string(iFactor))
+            disp("Factor: "+ string(iFactor))
             for j = i: iColumnas
                 dmatMatriz(k,j) = dmatMatriz(k,j) - iFactor*dmatMatriz(i,j)
             end
@@ -199,7 +191,7 @@ function Montante(dMatValues)
     iRenglones = size(dMatValues,1)
     //Numero de columnas
     iColumnas = size(dMatValues,2)
-     
+
     for i = 1: iRenglones
         for k = 1: iRenglones
             if k ~= i then
@@ -224,7 +216,7 @@ function Montante(dMatValues)
         X(i) = dMatValues(i,iColumnas) / iPivoteAnterior
     end
     DespliegaArreglo(X)
-    
+
 endfunction
 
 
@@ -298,14 +290,14 @@ endfunction
 //
 /////////////////////////////////////////////////////////////////////
 function CalculaSecante()
-    // Solicita la función a ser resuelta y la declara como funcionSecante
-    LeeFuncion("FuncionSecante")
+    // Solicita la función a ser resuelta con el nombre de funcionSecante
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionSecante")
 
     // Lee los datos iniciales
-    [dXPrev, dXAct, dErrAbsMeta, iMaxIter] = leeDatosSecante()
+    [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
 
     // Calcula las iteraciones para calcular las raices
-    IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter)
+    IteraSecante(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
 
 endfunction
@@ -318,14 +310,24 @@ endfunction
 //  no lineal por medio del método de la secante.
 //
 /////////////////////////////////////////////////////////////////////
-function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter)
+function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+
     // Calcula la primera iteración y la despliega
-    dXSig = IteraX(dXPrev, dXAct)
+    dXSig = IteraX(dXPrev, dXAct, sArgDeff1, sArgDeff2)
 
     // Obtiene el valor de la función evaluada con X = dXSig
     dEval = FuncionSecante(dXSig)
-    disp(" Iteración #" + string(iIterAct) + ":")
-    disp(" X: " + string(dXSig))
+
+    // Inicializa el valor del error de aproximación con un valor muy grande
+    dErrAbsAct = 999999999999999.9
+    iIterAct = 1
+    disp("Iteración #"+ string(iIterAct) + ":")
+    disp("X: "+ string(dXSig))
+
+    // Mostrar todos los decimales en el proceso
+    format(25);
 
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
@@ -333,23 +335,23 @@ function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter)
         dXPrev = dXAct
         dXAct = dXSig
         dXSig = IteraX(dXPrev, dXAct)
-        dEval = EvaluaX(dXSig)
+        dEval = FuncionSecante(dXSig)
         iIterAct = iIterAct + 1
         // Calcula el error absoluto porcentual actual
         dErrAbsAct = CalculaErrAbs(dXSig, dXAct)
-        disp(" Iteración #" + string(iIterAct) + ":")
-        disp(" X: " + string(dXSig))
-        disp(" Error absoluto: " + string(dErrAbsAct) + "%")
+        disp("Iteración #"+ string(iIterAct) + ":")
+        disp("X: "+ string(dXSig))
+        disp("Error absoluto: "+ string(dErrAbsAct) + "%")
     end
 
     // Imprime la forma en la que se obtuvo la raiz dependiendo de cual
     // haya sido el límite alcanzado
     if iIterAct >= iMaxIter then
-        disp(" La raiz fue aproximada con el numero de iteraciones dado")
+        disp("La raiz fue aproximada con el numero de iteraciones dado")
     elseif dErrAbsAct <= dErrAbsMeta then
-        disp(" La raiz fue aproximada con el error absoluto porcentual")
+        disp("La raiz fue aproximada con el error absoluto porcentual")
     elseif dEval == 0 then
-        disp(" La raiz encontrada fue exacta")
+        disp("La raiz encontrada fue exacta")
     end
 endfunction
 
@@ -366,10 +368,10 @@ function [dXPrev, dXAct, dErrAbsMeta, iMaxIter] = leeDatosSecante()
 
     // Solicita el valor inicial para x previa y x actual, el error
     // absoluto en valor porcentual y el numero maximo de iteraciones
-    dXPrev = input(" Ingrese el valor de X previo: ")
-    dXAct = input(" Ingrese el valor de X actual: ")
-    dErrAbsMeta = input(" Ingrese el valor del error absoluto: ")
-    iMaxIter = input(" Ingrese el valor máximo de iteraciones: ")
+    dXPrev = input("Ingrese el valor de X previo: ")
+    dXAct = input("Ingrese el valor de X actual: ")
+    dErrAbsMeta = input("Ingrese el valor del error absoluto: ")
+    iMaxIter = input("Ingrese el valor máximo de iteraciones: ")
 
 endfunction
 
@@ -386,7 +388,10 @@ endfunction
 //  Regresa:
 //     dXSig     el siguiente valor de x
 /////////////////////////////////////////////////////////////////////
-function [dXSig] = IteraX(dXPrev, dXAct)
+function [dXSig] = IteraX(dXPrev, dXAct, sArgDeff1, sArgDeff2)
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+
     // Obtiene los valores de la función evaluada en dX
     dYPrev = FuncionSecante(dXPrev)
     dYAct = FuncionSecante(dXAct)
@@ -402,7 +407,7 @@ function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
-        disp("Menu de opciones")
+        disp("\n\nMenu de opciones")
         disp("1. Solución de ecuaciones no lineales")
         disp("2. Solución de ecuacines lineales")
         disp("3. Ajuste de curvas")
@@ -421,7 +426,7 @@ function Menu()
         elseif (iOpciones == 5) then
             Integracion()
         elseif (iOpciones == 6) then
-            disp("hasta luego ")
+            disp("Hasta luego ")
         else
             disp("Opción erronea")
         end
@@ -431,7 +436,7 @@ endfunction
 function EcuacionesNoLineales()
     iOpciones = 0
     while(iOpciones  ~=  6)
-        disp("Menu de opciones")
+        disp("\n\nMenu de opciones")
         disp("1. Bisección")
         disp("2. Newton-Rapson")
         disp("3. Secante")
@@ -439,6 +444,9 @@ function EcuacionesNoLineales()
         disp("5. Birge Vieta")
         disp("6. Salir")
         iOpciones = input("Que opción deseas (1-6) ")
+        if (iOpciones == 3) then
+            CalculaSecante()
+        end
     end
 endfunction
 
@@ -446,21 +454,22 @@ function EcuacionesLineales()
     iOpciones = 0
     while (iOpciones ~= 5)
         iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
-        if iOpciones ~= 5 then 
+        if iOpciones ~= 5 then
             dmatMatriz = LeeMatriz()
         elseif iOpciones < 5 then
-            disp("Menu de opciones")
+            disp("\n\nMenu de opciones")
             disp("1. Cramer")
             disp("2. Eliminación Gaussiana")
             disp("3. Gauss-Jordan")
             disp("4. Montante")
             disp("5. Salir")
             iOpciones = input("Que opción deseas (1-6) ")
+
             if (iOpciones == 4) then
                 Montante(dmatMatriz)
             elseif (iOpciones == 3) then
                 EliminacionGaussiana(dmatMatriz)
-                end
+            end
         end
     end
 endfunction
@@ -468,7 +477,7 @@ endfunction
 function AjusteDeCurvas()
     iOpciones = 0
     while (iOpciones ~= 5)
-        disp("Menu de opciones")
+        disp("\n\nMenu de opciones")
         disp("1. Regresión Lineal")
         disp("2. Regresión Exponencial")
         disp("3. Regresión Potencial")
@@ -481,7 +490,7 @@ endfunction
 function Interpolacion()
     iOpciones = 0
     while (iOpciones ~= 3)
-        disp("Menu de opciones")
+        disp("\n\nMenu de opciones")
         disp("1. Lagrange")
         disp("2. Diferencias Divididas de Newton")
         disp("3. Salir")
@@ -492,7 +501,7 @@ endfunction
 function Integracion()
     iOpciones = 0
     while (iOpciones ~= 4)
-        disp("Menu de opciones")
+        disp("\n\nMenu de opciones")
         disp("1. Trapecio")
         disp("2. Simpson 1/3")
         disp("3. Newton-Rapson para ecuaciones no lineales")
