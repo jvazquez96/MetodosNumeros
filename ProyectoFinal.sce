@@ -28,17 +28,18 @@ clear
 //  Función que introduce los datos a una matriz de tamaño N*M
 //
 //  Retorno:
-//     dMat: Matriz con los datos del usuario
+//     dmatMatriz: Matriz con los datos del usuario
 ///////////////////////////////////////////////////////////////////////////
-function dMat = LeeMatriz()
-    // Leer las dimensiones de la matriz
+function dmatMatriz = LeeMatriz()
+    // Lee las dimensiones de la matriz
     iRow = input("Ingrese el número de renglones: ")
     iCol = input("Ingrese el número de columnas: ")
     // Para cada renglón
     for iT = 1 : iRow
         // Para cada columna
         for iJ = 1 : iCol
-           dMat(iT, iJ) = input("Ingrese el elemento:   (" + string(iT) + ", " + string(iJ) + "):  ")
+            sTexto = "Ingrese el elemento:   ("  + string(iT) + ", "
+            dmatMatriz(iT, iJ) = input(sTexto + string(iJ) + "):  ")
         end
     end
 endfunction
@@ -144,9 +145,9 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-//   EliminacionGaussiana()
+//  EliminacionGaussiana()
 //
-//  Función realiza la eliminación Gaussiana en una matriz recibida.
+//  Función realiza la eliminación Gaussiana en una matriz ingresada.
 //  Algoritmo de Eliminación Gaussiana:
 //      1. Para i desde 1 hasta renglones - 1
 //          1.1 Para k desde i + 1 hasta renglones
@@ -154,29 +155,32 @@ endfunction
 //              1.1.2  Para j desde i hasta columnas
 //                  1.1.2.1  M(k, j) = M(k, j) + factor * M(i, j)
 //
-//  Parametros:
-//     dMatrix: La matriz original a ser procesada
 ///////////////////////////////////////////////////////////////////////////
-function dMatrix = EliminacionGaussiana(dMatrix)
+function EliminacionGaussiana()
+    // Pide al usuario la matriz a ser utilizada
+    dmatMatriz = LeeMatriz()
     iFactor = 0
     //Tamaño de los renglones
-    iRenglones = size(dMatrix,1)
+    iRenglones = size(dmatMatriz,1)
     //Tamaño de las columnas
-    iColumnas = size(dMatrix,2)
+    iColumnas = size(dmatMatriz,2)
     for i = 1: iRenglones - 1
         for k = i + 1: iRenglones
-            iFactor =  dMatrix(k,i) / dMatrix(i,i)
+            iFactor =  dmatMatriz(k,i) / dmatMatriz(i,i)
             disp("Factor: " + string(iFactor))
             for j = i: iColumnas
-                dMatrix(k,j) = dMatrix(k,j) - iFactor*dMatrix(i,j)
+                dmatMatriz(k,j) = dmatMatriz(k,j) - iFactor*dmatMatriz(i,j)
             end
         end
     end
     // Imprimir la matriz en el estado reducido
-    ImprimeMatriz(dMatrix)
+    ImprimeMatriz(dmatMatriz)
 
     // Encontrar los valores de las incógnitas
-    SustituyeHaciaAtras(dMatrix)
+    darrX = SustituyeHaciaAtras(dmatMatriz)
+
+    // Despliega el arreglo de las soluciones encontradas
+    DespliegaArreglo(darrX)
 
 endfunction
 
@@ -197,7 +201,7 @@ endfunction
 //  Parametros:
 //      dMatValues: La matriz ya procesada con la eliminación de gauss
 ///////////////////////////////////////////////////////////////////////////
-function SustituyeHaciaAtras(dMatValues)
+function [darrX] = SustituyeHaciaAtras(dMatValues)
     //Cantidad de renglones
     iRenglones= size(dMatValues,1)
 
@@ -206,19 +210,16 @@ function SustituyeHaciaAtras(dMatValues)
 
     iSuma = 0
     //Obtener la primera solución
-    X(iRenglones,1) = dMatValues(iRenglones,iColumnas)/dMatValues(iRenglones,iRenglones)
+    darrX(iRenglones,1) = dMatValues(iRenglones,iColumnas)/dMatValues(iRenglones,iRenglones)
     // Para cada renglon
     for i = iRenglones - 1: -1:1
         iSuma = 0;
         // Para cada columna
         for j = iColumnas - 1:-1:i+1
-            iSuma = iSuma + dMatValues(i,j) * X(j);
+            iSuma = iSuma + dMatValues(i,j) * darrX(j);
         end
-      X(i) = (dMatValues(i,iColumnas) - iSuma) / dMatValues(i,i)
+        darrX(i) = (dMatValues(i,iColumnas) - iSuma) / dMatValues(i,i)
     end
-
-    // Despliega el arreglo de las soluciones encontradas
-    DespliegaArreglo(X)
 
 endfunction
 
