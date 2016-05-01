@@ -66,9 +66,9 @@ Proyecto final de la clase de métodos numéricos
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
-- [ ] Inversa por cofactores
+- [X] Inversa por cofactores
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 ### Interpolación
