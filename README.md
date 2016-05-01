@@ -93,7 +93,7 @@ Proyecto final de la clase de métodos numéricos
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
-- [ ] Newton-Rapson para ecuaciones no lineales
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+- [X] Newton-Rapson para ecuaciones no lineales
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
