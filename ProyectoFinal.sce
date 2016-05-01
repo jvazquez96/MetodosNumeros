@@ -146,6 +146,25 @@ function DespliegaArreglo(darrX)
     end
     disp("")
 endfunction
+///////////////////////////////////////////////////////////////////////////
+//  DespliegaEcuacion()
+//
+//  Función que despliega los valores de las soluciones encontradas
+//  para la matriz 
+//
+//  Parametros:
+//     darrX: El arreglo con las soluciones a las incógnitas
+//     iTipo: Entero que determina el tipo de ecuación a mostrar
+///////////////////////////////////////////////////////////////////////////
+function DespliegaEcuacion(darrX, iTipo)
+    if iTipo == 1 then
+        disp("y=" + string(darrX(1,1)) + "+" + string(darrX(2,1)) + "x")
+    elseif iTipo == 2 then
+        disp("y=" + string(exp(darrX(1,1))) + " e^ "  + string(darrX(2,1)))
+    else 
+           disp("y=" + string(exp(darrX(1,1))) + "^"  + string(darrX(2,1)))
+    end
+endfunction
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -172,7 +191,7 @@ endfunction
 //     dmatValores: La matriz original a ser procesada
 //
 ///////////////////////////////////////////////////////////////////////////
-function EliminacionGaussiana(dmatValores)
+function EliminacionGaussiana(dmatValores, iTipo)
     disp(ascii(10))
     sTitulo = "Solucion por medio de la Eliminación Gaussiana"
     disp("--------------- " + sTitulo + " ---------------")
@@ -346,7 +365,7 @@ endfunction
 //  Parametros:
 //     dmatValores: La matriz original a ser procesada
 ///////////////////////////////////////////////////////////////////////////
-function Montante(dmatValores)
+function Montante(dmatValores, iTipo)
     disp(ascii(10))
     sTitulo = "Solucion por medio del método Montante"
     disp("--------------- " + sTitulo + " ---------------")
@@ -382,7 +401,11 @@ function Montante(dmatValores)
     end
     // Despliega las soluciones de los valores a las incógnitas
     disp('Soluciones a las incógnitas son: ');
-    DespliegaArreglo(X)
+    if iTipo < 4 then
+        DespliegaEcuacion(X,iTipo)
+    else
+        DespliegaArreglo(X)
+    end
 
 endfunction
 
@@ -808,6 +831,201 @@ function CalculaRegulaFalsi()
 
 endfunction
 
+/////////////////////////////////////////////////////////////////////
+//  leedatosRegresión()
+//
+//  Función que lee datos para una matriz para regresiones
+//  
+//  Regresa:
+//  dMat = Matriz con los datos introducidos por el usuario
+//
+/////////////////////////////////////////////////////////////////////
+function [dMat] = leeDatosRegresion()
+    //Cantida de datos
+    iCantidad = input("¿Cuantos datos? ")
+    for i = 1:iCantidad
+        for j = 1: 2
+            dMat(i,j) = input("Introduzca el dato para la casilla " + string(i) + string(j))
+        end
+    end
+
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  sumatoria(dMat,iTipo)
+//
+//  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
+//  
+//  Parametros:
+//  dMat = Matriz de donde se obtienen los datos
+//  iTipo = Entero que determina la sumatoria a obtener
+//
+//  Regresa:
+//  dSum = Sumatoria de datos
+/////////////////////////////////////////////////////////////////////
+function dSum = sumatoria(dMat,iTipo)
+    //Tamaño de los renglones
+    iRenglones = size(dMat,1)
+    //Tamaño de las columnas
+    iColumnas = size(dMat,2)
+    dSum = 0
+    //Suma de los valores de x
+    if iTipo == 1 then
+        for i = 1: iRenglones
+            dSum = dSum + dMat(i,1)
+        end
+    //Suma de los valores de x*x
+    elseif iTipo == 2 then
+        for i = 1: iRenglones
+            dSum = dSum + (dMat(i,1)*dMat(i,1))
+        end 
+    //Suma de los valores de log(x)
+    elseif iTipo == 3 then
+        for i = 1: iRenglones
+            dSum = dSum + log(dMat(i,1))
+        end
+    //Suma de los valores de log(x)*log(x)
+    elseif iTipo == 4 then
+        for i = 1: iRenglones
+            dSum = dSum + (log(dMat(i,1)) * log(dMat(i,1)))
+        end
+    //Suma de los valores de y
+    elseif iTipo == 5 then
+        for i = 1: iRenglones
+            dSum = dSum + dMat(i,2)
+        end
+    elseif iTipo == 6 then
+        for i = 1: iRenglones
+            dSum = dSum + (dMat(i,2) * dMat(i,1))
+        end
+    elseif iTipo == 7 then
+        for i = 1: iRenglones
+            dSum = dSum + log(dMat(i,2))
+        end
+    elseif iTipo == 8 then
+        for i = 1: iRenglones
+            dSum = dSum + (log(dMat(i,2)) * dMat(i,1))
+        end
+    else
+        for i = 1: iRenglones
+            dSum = dSum + (log(dMat(i,1)) * log(dMat(i,2)))
+        end
+    end
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  llenaMatriz()
+//
+//  Función que llena una matríz dependiendo del tipo de regresión 
+//
+//  Regresa:
+//  dMatrix = Matriz con los valores correspondientes
+//
+/////////////////////////////////////////////////////////////////////
+
+function dMatrix = llenaMatriz(dMat,iTipo)
+    //Cantidad de datos
+    iCantidad = size(dMat,1)
+    if iTipo == 1 then
+        dMatrix(1,1) = iCantidad
+        dMatrix(1,2) = sumatoria(dMat,1)
+        dMatrix(2,1) = sumatoria(dMat,1)
+        dMatrix(2,2) = sumatoria(dMat,2)
+        dMatrix(1,3) = sumatoria(dMat,5)
+        dMatrix(2,3) = sumatoria(dMat,6)
+    elseif iTipo == 2 then
+        dMatrix(1,1) = iCantidad
+        dMatrix(1,2) = sumatoria(dMat,1)
+        dMatrix(2,1) = sumatoria(dMat,1)
+        dMatrix(2,2) = sumatoria(dMat,2)
+        dMatrix(1,3) = sumatoria(dMat,7)
+        dMatrix(2,3) = sumatoria(dMat,8)
+    else
+        dMatrix(1,1) = iCantidad
+        dMatrix(1,2) = sumatoria(dMat,3)
+        dMatrix(2,1) = sumatoria(dMat,3)
+        dMatrix(2,2) = sumatoria(dMat,4)
+        dMatrix(1,3) = sumatoria(dMat,7)
+        dMatrix(2,3) = sumatoria(dMat,9)
+    end
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Regresión Lineal: Aproximación de una función a ciertos puntos
+//
+//  Programa de Solución de una función a ciertos puntos
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  RegresiónLineal()
+//
+//  Pide datos y se llena la matriz que se resuelve por el metodo de montante
+//
+/////////////////////////////////////////////////////////////////////
+function RegresionLineal()
+
+// Leer los datos iniciales
+    dMat = leeDatosRegresion()
+// Introducir datos en la matriz
+    dCompleteMatrix = llenaMatriz(dMat,1)
+// Resolver la matriz por el metodo de montante
+    Montante(dCompleteMatrix,1)
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Regresión Exponencial: Aproximación de una función a ciertos puntos
+//
+//  Programa de Solución de una función a ciertos puntos
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  RegresiónExponencial()
+//
+//  Pide datos y se llena la matriz que se resuelve por el metodo de montante
+//
+/////////////////////////////////////////////////////////////////////
+function RegresionExponencial()
+
+// Leer los datos iniciales
+    dMat = leeDatosRegresion()
+// Introducir datos en la matriz
+    dCompleteMatrix = llenaMatriz(dMat,2)
+// Resolver la matriz por el metodo de montante
+    Montante(dCompleteMatrix,2)
+
+endfunction
+///////////////////////////////////////////////////////////////////////////
+// Regresión Pontencial: Aproximación de una función a ciertos puntos
+//
+//  Programa de Solución de una función a ciertos puntos
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  RegresiónPotencial()
+//
+//  Pide datos y se llena la matriz que se resuelve por el metodo de montante
+//
+/////////////////////////////////////////////////////////////////////
+
+function RegresionPotencial()
+
+// Leer los datos iniciales
+    dMat = leeDatosRegresion()
+// Introducir datos en la matriz
+    dCompleteMatrix = llenaMatriz(dMat,3)
+// Resolver la matriz por el metodo de montante
+    Montante(dCompleteMatrix,3)
+
+endfunction
+
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
@@ -909,7 +1127,7 @@ function EcuacionesLineales()
             elseif (iOpciones == 3) then
                 EliminacionGaussiana(dmatValores)
             elseif (iOpciones == 4) then
-                Montante(dmatValores)
+                Montante(dmatValores,5)
             end
         end
     end
@@ -929,6 +1147,13 @@ function AjusteDeCurvas()
         disp("4. Inversa por Cofactores")
         disp("5. Salir")
         iOpciones = input(" Qué opción deseas (1-6) --> ")
+        if iOpciones == 1 then
+            RegresionLineal()
+        elseif iOpciones == 2 then
+            RegresionExponencial()
+        elseif iOpciones == 3 then
+            RegresionPotencial()
+        end
     end
 endfunction
 
