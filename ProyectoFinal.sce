@@ -832,6 +832,129 @@ function CalculaRegulaFalsi()
 endfunction
 
 /////////////////////////////////////////////////////////////////////
+// iSiguiente
+//  Función que se encarga de calcular la siguiente aproximación de acuerdo a 
+//  formula de la serie de Netwon-Raphson:
+//  iInicio - f(iIncio)/f'(iInicio)
+//   
+// 
+//  Parametros:
+//     iInicio    es el valor de donde empieza la serie
+//    
+//  Regresa:
+//      iNuevo       la siguiente aproximación
+/////////////////////////////////////////////////////////////////////
+
+function iNuevo = iSiguiente(iInicio)
+    //Inicializar nuevo con 1
+    iNuevo = 1
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+    iNuevo = FuncionRaphson(iInicio)
+    iNuevo =  iNuevo / numderivative(FuncionRaphson,iInicio)
+    iNuevo = iInicio - iNuevo
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+// iErrorAprox
+//  Función que se encarga de calcular el error aproximado de acuerdo a la
+//  formula: AproxNueva - AproxVieja / AproxNueva * 100
+//   
+// 
+//  Parametros:
+//     iVieja    es la aproximacion vieja
+//     iNueva     es la nueva aproximación
+//  Regresa:
+//      iE       es el valor del error aproximado
+/////////////////////////////////////////////////////////////////////
+
+function iE = iErrorAprox(iVieja,iNueva)
+    //Inicializar el error en 0
+    iE = 0
+    //Calcular el error
+    iE = abs(iNueva - iVieja) / abs(iNueva) * 100
+endfunction
+/////////////////////////////////////////////////////////////////////
+//  Calcula
+//  Función que se encarga de mostrar el resultado aproximado de 
+//   la raiz 
+// 
+//  Parametros:
+//     iInicio    es el valor de X inicial
+//     iError     es el valor del error maximo
+//     iTeraciones es el valor maximo a iterar
+/////////////////////////////////////////////////////////////////////
+function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
+    //Inicializar variables
+    dErrAbsAct = 9999999
+    iIterAct = 1;
+    iViejo = 0;
+    iNueva = 1;
+    iRaiz = 1
+    deff(sArgDeff1, sArgDeff2)
+    //Hacer el ciclo hasta que el error sea mayor o igual al error que pidio el
+    // usuario o hasta que se haya llegado al limite de ciclos pedido por el 
+    // usuario o hasta encontrar la raiz de la función
+    while dErrAbsAct > dErrAbsMeta & iIterAct <= iMaxIter & iRaiz ~= 0
+        if iIterAct == 1 then
+            disp("Primera iteración: ")
+            iNueva = iSiguiente(iInicio)
+            disp(string(iNueva))
+            iIterAct = iIterAct + 1
+            iRaiz = FuncionRaphson(iNueva);
+        end
+        if iIterAct > 1 then
+            disp("Iteración: " + string(iIterAct))
+            iViejo = iNueva
+            disp("Valor previo: " + string(iViejo))
+            iNueva = iSiguiente(iViejo)
+            disp("Valor nuevo: " + string(iNueva))
+            dErrAbsAct = iErrorAprox(iViejo,iNueva)
+            disp("Error aproximado: " + string(dErrAbsAct))
+            iMaxIter = iMaxIter + 1
+            iRaiz = FuncionRaphson(iNueva);
+            
+        end
+        
+        if iIterAct >= iMaxIter then
+            disp("La raiz fue aproximada con el numero de iteraciones dado")
+        elseif dErrAbsAct <= dErrAbsMeta then
+            disp("La raiz fue aproximada con el error absoluto porcentual")
+        elseif iRaiz == 0 then
+            disp("La raiz encontrada fue exacta")
+        end
+    end
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  leeDatosSecante()
+//      Regresa:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+/////////////////////////////////////////////////////////////////////
+function [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
+
+    // Solicita el valor inicial para x previa y x actual, el error
+    // absoluto en valor porcentual y el numero maximo de iteraciones
+    dXInicio = input("Ingrese el valor de X previo: ")
+    dErrAbsMeta = input("Ingrese el valor del error absoluto: ")
+    iMaxIter = input("Ingrese el valor máximo de iteraciones: ")
+
+endfunction
+function CalculaNewtonRaphson()
+ // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRaphson")
+// Lee los datos iniciales
+    [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
+// Calcula las iteraciones para calcular las raices
+    IteraNewtonRaphson(dXInicio,dErrAbsMeta,iMaxIter)
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
 //  leedatosRegresión()
 //
 //  Función que lee datos para una matriz para regresiones
@@ -1202,6 +1325,8 @@ function EcuacionesNoLineales()
         iOpciones = input(" Qué opción deseas (1-6) --> ")
         if iOpciones == 1 then
             CalculaBiseccion()
+        elseif iOpciones == 2 then
+            CalculaNewtonRaphson()
         elseif (iOpciones == 3) then
             CalculaSecante()
         elseif (iOpciones == 4) then
