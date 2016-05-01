@@ -4,10 +4,10 @@ Proyecto final de la clase de métodos numéricos
 ## Metodos por añadir:
 
 ### Solución de ecuaciones no lineales
-- [ ] Bisección
+- [X] Bisección
     * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 - [ ] Newton-Rapson
     * [X] Lo tenemos hecho
