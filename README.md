@@ -9,10 +9,10 @@ Proyecto final de la clase de métodos numéricos
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
-- [ ] Newton-Rapson
+- [X] Newton-Rapson
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 - [X] Secante
     * [X] Lo tenemos hecho
