@@ -1089,6 +1089,101 @@ function RegresionPotencial()
 
 endfunction
 
+/////////////////////////////////////////////////////////////////////
+//
+//  IntegraTrapecios()
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+//      Regresa:
+//          iResultado: La aproximación de la integral
+//
+/////////////////////////////////////////////////////////////////////
+function iResultado = IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    iFA = Evalua(dA)
+    iFB = Evalua(dB)
+    iSum = 0
+
+    // Obtiene el valor de la sumatoria
+    for i = 1: iN - 1
+        iSum = iSum + Evalua(i * iH)
+    end
+
+    // Calcula el resultado de acuerdo a la fórmula
+    iSum = iSum * 2
+    iResultado = (iH / 2) * (iFA + iSum + iFB)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//
+//  IntegraSimpson()
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+//      Regresa:
+//          iResultado: La aproximación de la integral
+//
+/////////////////////////////////////////////////////////////////////
+function iResultado = IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    // Obtiene el valor de la función evaluada en dA
+    iFA = Evalua(dA)
+
+    // Obtiene el valor de la función evaluada en dB
+    iFB = Evalua(dB)
+    iSum1 = 0
+    iSum2 = 0
+
+    // Obtiene el valor de la primera sumatoria
+    if (iN > 1)
+        for i = 1:2:(iN - 1)
+            iSum1 = iSum1 + Evalua(i * iH)
+        end
+        iSum1 = iSum1 * 4
+    end
+
+    // Obtiene el valor de la segunda sumatoria
+    if (iN > 2)
+        for i = 2:2:(iN - 2)
+            iSum2 = iSum2 + Evalua(i * iH)
+        end
+        iSum2 = iSum2 * 2
+    end
+    iResultado = (iH / 3) * (iFA + iSum1 + iSum2 + iFB)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//
+//  leeDatosIntegracion()
+//      Regresa:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+/////////////////////////////////////////////////////////////////////
+function [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+    // Lee los límites y el número de cortes
+    dA = input(' Ingrese el límite inferior: ')
+    dB = input(' Ingrese el límite superior: ')
+    iN = input(' Ingrese el número de cortes: ')
+
+    // Lee la función a ser integrada
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionIntegracion")
+
+endfunction
+
+
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
@@ -1241,6 +1336,7 @@ endfunction
 
 function Integracion()
     iOpciones = 0
+    [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
     while (iOpciones ~= 4)
         disp(ascii(10) + ascii(10))
         sTitulo = "Integración"
@@ -1250,7 +1346,10 @@ function Integracion()
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
         iOpciones = input(" Qué opción deseas (1-4) --> ")
-
+        if iOpciones == 1 then
+            IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+        elseif iOpciones == 2 then
+            IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
     end
 
 endfunction
