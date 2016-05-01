@@ -24,10 +24,10 @@ Proyecto final de la clase de métodos numéricos
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
-- [ ] Birge Vieta
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+- [X] Birge Vieta
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 ### Solución de ecuaciones lineales
 - [X] Cramer
