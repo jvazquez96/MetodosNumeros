@@ -72,14 +72,14 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Probado y funcionando
 
 ### Interpolación
-- [ ] Lagrange
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+- [X] Lagrange
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
-- [ ] Diferencias dividas de Newton
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+- [X] Diferencias dividas de Newton
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 ### Integración
