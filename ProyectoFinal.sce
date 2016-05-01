@@ -258,26 +258,33 @@ function EliminacionGaussiana(dmatValores, iTipo)
     disp(ascii(10))
     sTitulo = "Solucion por medio de la Eliminación Gaussiana"
     disp("--------------- " + sTitulo + " ---------------")
-    iFactor = 0
+    dFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
     iColumnas = size(dmatValores,2)
     for i = 1: iRenglones - 1
         for k = i + 1: iRenglones
-            iFactor =  dmatValores(k,i) / dmatValores(i,i)
-            disp("Factor: "+ string(iFactor))
+            // Evitar divisiones entre cero
+            if dmatValores(i,i) ~= 0
+                dFactor =  dmatValores(k,i) / dmatValores(i,i)
+            else
+                dFactor =  0
+            end
+            disp("Factor: "+ string(dFactor))
             for j = i: iColumnas
-                dmatValores(k,j) = dmatValores(k,j) - iFactor*dmatValores(i,j)
+                dmatValores(k,j) = dmatValores(k,j) - dFactor*dmatValores(i,j)
             end
         end
     end
     // Imprimir la matriz en el estado reducido
+    disp("La matriz en estado reducido es: ")
     ImprimeMatriz(dmatValores)
 
     // Encontrar los valores de las incógnitas
     darrX = SustituyeHaciaAtras(dmatValores)
 
+    disp(ascii(10))
     // Despliega el arreglo de las soluciones encontradas
     disp('Las soluciones a las incógnitas son: ');
     DespliegaArreglo(darrX)
@@ -318,7 +325,7 @@ function EliminacionGaussJordan(dmatValores)
     disp(ascii(10))
     sTitulo = "Solucion por medio de la Eliminación Gauss-Jordan"
     disp("--------------- " + sTitulo + " ---------------")
-    iFactor = 0
+    dFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
@@ -340,7 +347,12 @@ function EliminacionGaussJordan(dmatValores)
                 // Si el actual no es el renglon pivote
                 if(k <> i) then
                     // Calcula el factor del primer elemento con el pivote
-                    dFactor =  dmatValores(k,i) / dmatValores(i,i)
+                    // Evitar divisiones entre cero
+                    if dmatValores(i,i) ~= 0
+                        dFactor =  dmatValores(k,i) / dmatValores(i,i)
+                    else
+                        dFactor =  0
+                    end
                     // Resta el factor * celda para hacer 0 el primer elemento
                     for j = 1: iColumnas
                         dMult = dFactor * dmatValores(i,j)
@@ -357,6 +369,7 @@ function EliminacionGaussJordan(dmatValores)
     // Imprime la matriz en el estado reducido
     disp('Matriz después de la eliminación Gauss-Jordan: ');
     ImprimeMatriz(dmatValores)
+    disp(ascii(10))
 
     // Encuentra los valores de las incógnitas
     ExtraeSoluciones(dmatValores)
@@ -450,19 +463,32 @@ function Montante(dmatValores, iTipo)
         end
         //Actualizar el pivote
         iPivoteAnterior = dmatValores(i,i)
+
+        // Imprimir la matriz en el número de iteración actual
+        disp('Iteración #' + string(i));
         ImprimeMatriz(dmatValores)
     end
     //Igualar los pivotes anteriores con el ultimo pivote
     for i = 1: iRenglones-1
         dmatValores(i,i) = iPivoteAnterior
     end
+
+    // Imprime la matriz en el estado reducido
+    disp('Matriz después de la eliminación por el método Montante: ');
     ImprimeMatriz(dmatValores)
+    disp(ascii(10))
+
     //Dividir cada valor de la ultima columna entre el pivote
     for i = 1: iRenglones
-        X(i) = dmatValores(i,iColumnas) / iPivoteAnterior
+        // Evitar divisiones entre cero
+        if iPivoteAnterior ~= 0
+            X(i) = dmatValores(i,iColumnas) / iPivoteAnterior
+        else
+            X(i) = 0
+        end
     end
     // Despliega las soluciones de los valores a las incógnitas
-    disp('Soluciones a las incógnitas son: ');
+    disp('Las soluciones a las incógnitas son: ');
     if iTipo < 4 then
         DespliegaEcuacion(X,iTipo)
     else
@@ -499,6 +525,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
     //Obtener la primera solución
     if dmatValores(iRen, iRen) ~= 0
         darrX(iRen, 1) = dmatValores(iRen, iCol) / dmatValores(iRen, iRen)
+    else
+        // Evitar divisiones entre cero
+        darrX(iRen, 1) = 0
     end
     // Para cada renglon
     for i = iRen - 1: -1:1
@@ -508,7 +537,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
             iSuma = iSuma + dmatValores(i,j) * darrX(j);
         end
         if dmatValores(i,i) ~= 0
-            darrX(i) = (dmatValores(i,iCol) - iSuma) / dmatValores(i,i)
+            darrX(i) = (dmatValores(i, iCol) - iSuma) / dmatValores(i,i)
+        else
+            darrX(i) = 0
         end
     end
 
@@ -895,14 +926,14 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 // iSiguiente
-//  Función que se encarga de calcular la siguiente aproximación de acuerdo a 
+//  Función que se encarga de calcular la siguiente aproximación de acuerdo a
 //  formula de la serie de Netwon-Raphson:
 //  iInicio - f(iIncio)/f'(iInicio)
-//   
-// 
+//
+//
 //  Parametros:
 //     iInicio    es el valor de donde empieza la serie
-//    
+//
 //  Regresa:
 //      iNuevo       la siguiente aproximación
 /////////////////////////////////////////////////////////////////////
@@ -922,8 +953,8 @@ endfunction
 // iErrorAprox
 //  Función que se encarga de calcular el error aproximado de acuerdo a la
 //  formula: AproxNueva - AproxVieja / AproxNueva * 100
-//   
-// 
+//
+//
 //  Parametros:
 //     iVieja    es la aproximacion vieja
 //     iNueva     es la nueva aproximación
@@ -939,9 +970,9 @@ function iE = iErrorAprox(iVieja,iNueva)
 endfunction
 /////////////////////////////////////////////////////////////////////
 //  Calcula
-//  Función que se encarga de mostrar el resultado aproximado de 
-//   la raiz 
-// 
+//  Función que se encarga de mostrar el resultado aproximado de
+//   la raiz
+//
 //  Parametros:
 //     iInicio    es el valor de X inicial
 //     iError     es el valor del error maximo
@@ -956,7 +987,7 @@ function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
     iRaiz = 1
     deff(sArgDeff1, sArgDeff2)
     //Hacer el ciclo hasta que el error sea mayor o igual al error que pidio el
-    // usuario o hasta que se haya llegado al limite de ciclos pedido por el 
+    // usuario o hasta que se haya llegado al limite de ciclos pedido por el
     // usuario o hasta encontrar la raiz de la función
     while dErrAbsAct > dErrAbsMeta & iIterAct <= iMaxIter & iRaiz ~= 0
         if iIterAct == 1 then
@@ -976,9 +1007,9 @@ function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
             disp("Error aproximado: " + string(dErrAbsAct))
             iMaxIter = iMaxIter + 1
             iRaiz = FuncionRaphson(iNueva);
-            
+
         end
-        
+
         if iIterAct >= iMaxIter then
             disp("La raiz fue aproximada con el numero de iteraciones dado")
         elseif dErrAbsAct <= dErrAbsMeta then
@@ -1309,8 +1340,8 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   iDet(dMatrix,iX,iY)
-// 
-//  Función que saca el determinante de una matriz de un valor de la matriz 
+//
+//  Función que saca el determinante de una matriz de un valor de la matriz
 //
 //  Parametros:
 //     dMatrix
@@ -1345,7 +1376,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   Cofactores()
-// 
+//
 //  Función que saca la matriz de cofactores de una matriz
 //
 //  Parametros:
@@ -1373,7 +1404,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  Transpose(dMatrix)
-// 
+//
 //  Función que saca la matriz transpuesta de una matriz
 //
 //  Parametros:
@@ -1398,7 +1429,7 @@ function Transpose(dMatrix)
 endfunction
 /////////////////////////////////////////////////////////////////////
 //   GetDeterminante(dMatrix)
-// 
+//
 //  Función que saca el determinante inverso de una matriz
 //
 //  Parametros:
@@ -1413,7 +1444,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   InversaCofactores(dMatrix,iDeterminante)
-// 
+//
 //  Función que saca la matriz inversa de una matriz a través de la formula:
 //  Inversa: 1/determinante de la matriz * (Matriz de cofactores)
 //
@@ -1504,7 +1535,8 @@ function EcuacionesLineales()
         if(bPrimeraVez == %T)
             sMensaje = "Presiona enter para ingresar una matriz "
         else
-            sMensaje = "Persiona 1 si deseas ingresar una matriz diferente, 2 "
+            sMensaje = "Presiona 1 si deseas ingresar una matriz diferente,"
+            sMensaje = sMensaje + ascii(10) + "2 "
             sMensaje = sMensaje + "si deseas usar la matriz anterior de nuevo "
         end
         iOpciones = input(sMensaje +  "o 5 si deseas regresar --> ")
@@ -1529,9 +1561,9 @@ function EcuacionesLineales()
             if (iOpciones == 1) then
                 Cramer(dmatValores)
             elseif (iOpciones == 2) then
-                EliminacionGaussJordan(dmatValores)
-            elseif (iOpciones == 3) then
                 EliminacionGaussiana(dmatValores)
+            elseif (iOpciones == 3) then
+                EliminacionGaussJordan(dmatValores)
             elseif (iOpciones == 4) then
                 Montante(dmatValores,5)
             end

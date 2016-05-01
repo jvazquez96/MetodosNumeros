@@ -30,10 +30,10 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Probado y funcionando
 
 ### Solución de ecuaciones lineales
-- [ ] Cramer
+- [X] Cramer
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
 - [X] Eliminación Gaussiana
     * [X] Lo tenemos hecho
@@ -43,12 +43,12 @@ Proyecto final de la clase de métodos numéricos
 - [ ] Gauss Jordan c/s Pivoteo
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal // Falta sin pivoteo
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
 - [X] Montante
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando // Se queda congelado a veces
+    * [X] Probado y funcionando
 
 ### Ajuste de curvas
 - [X] Regresión Lineal
