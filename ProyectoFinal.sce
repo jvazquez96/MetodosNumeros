@@ -55,7 +55,7 @@ endfunction
 //  Imprime todas las celdas de una matriz recibida
 //
 //  Parametros:
-//     dMatrix: La matriz a ser impresa
+//     dmatVAlores: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
 function ImprimeMatriz(dmatValores)
     // Para cada renglon
@@ -111,6 +111,42 @@ function [sArgDeff1, sArgDeff2] = LeeFuncion(sNombreFuncion)
     sArgDeff1 = 'y=' + sNombreFuncion + '(x)'
     sArgDeff2 = sFunc
 
+endfunction
+/////////////////////////////////////////////////////////////////////
+//
+//  LeeFuncion2()
+//
+//  Pide y declara una función ingresada por el usuario con el nombre
+//  recibido en el parámentro sNombreFunción
+//      Parametros:
+//          sNombreFuncion: El nombre que tendrá la función ingresada
+//      Retorno:
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
+//
+/////////////////////////////////////////////////////////////////////
+function [sArgDeff1, sArgDeff2] = LeeFuncion2(sNombreFuncion)
+    // Lee la función a ser utilizada
+    disp("Ingrese la función a ser utilizada:");
+    sFunc = input("--> ", "string")
+
+    // Convierte cada letra ingresada en minúsculas
+    convstr(sFunc,"l")
+
+    // Serie de reglas para manejar funciones ingresadas en otros formatos,
+    if(strstr(sFunc,"y=") == ""& strstr(sFunc,'y =') == "") then
+        // En caso de que el usuario ingrese una función de la forma f(x)='..
+        if(strstr(sFunc,'f(x,a)=') <> "") then
+            sFunc = part(sFunc, 7:length(sFunc))
+        elseif(strstr(sFunc,'f(x,a) =') <> "") then
+            sFunc = part(sFunc, 8:length(sFunc))
+        end
+        sFunc = "[y]="+  sFunc
+    end
+
+    // Establece los argumentos para declarar la funcion con deff
+    sArgDeff1 = 'y=' + sNombreFuncion + '(x,a)'
+    sArgDeff2 = sFunc
 endfunction
 
 
@@ -944,8 +980,15 @@ function [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
     iMaxIter = input("Ingrese el valor máximo de iteraciones: ")
 
 endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  CalculaNewtonRaphson()
+//
+//  Pide una ecuación no lineal y calcula la solución de su raíz
+//
+/////////////////////////////////////////////////////////////////////
 function CalculaNewtonRaphson()
- // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+ // Solicita la función a ser resuelta con el nombre de FuncionRaphson
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRaphson")
 // Lee los datos iniciales
     [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
@@ -960,15 +1003,15 @@ endfunction
 //  Función que lee datos para una matriz para regresiones
 //  
 //  Regresa:
-//  dMat = Matriz con los datos introducidos por el usuario
+//  dmatValores = Matriz con los datos introducidos por el usuario
 //
 /////////////////////////////////////////////////////////////////////
-function [dMat] = leeDatosRegresion()
+function [dmatValores] = leeDatosRegresion()
     //Cantida de datos
     iCantidad = input("¿Cuantos datos? ")
     for i = 1:iCantidad
         for j = 1: 2
-            dMat(i,j) = input("Introduzca el dato para la casilla " + string(i) + string(j))
+            dmatValores(i,j) = input("Introduzca el dato para la casilla " + string(i) + string(j))
         end
     end
 
@@ -980,58 +1023,58 @@ endfunction
 //  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
 //  
 //  Parametros:
-//  dMat = Matriz de donde se obtienen los datos
+//  dmatValores = Matriz de donde se obtienen los datos
 //  iTipo = Entero que determina la sumatoria a obtener
 //
 //  Regresa:
 //  dSum = Sumatoria de datos
 /////////////////////////////////////////////////////////////////////
-function dSum = sumatoria(dMat,iTipo)
+function dSum = sumatoria(dmatValores,iTipo)
     //Tamaño de los renglones
-    iRenglones = size(dMat,1)
+    iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
-    iColumnas = size(dMat,2)
+    iColumnas = size(dmatValores,2)
     dSum = 0
     //Suma de los valores de x
     if iTipo == 1 then
         for i = 1: iRenglones
-            dSum = dSum + dMat(i,1)
+            dSum = dSum + dmatValores(i,1)
         end
     //Suma de los valores de x*x
     elseif iTipo == 2 then
         for i = 1: iRenglones
-            dSum = dSum + (dMat(i,1)*dMat(i,1))
+            dSum = dSum + (dmatValores(i,1)*dmatValores(i,1))
         end 
     //Suma de los valores de log(x)
     elseif iTipo == 3 then
         for i = 1: iRenglones
-            dSum = dSum + log(dMat(i,1))
+            dSum = dSum + log(dmatValores(i,1))
         end
     //Suma de los valores de log(x)*log(x)
     elseif iTipo == 4 then
         for i = 1: iRenglones
-            dSum = dSum + (log(dMat(i,1)) * log(dMat(i,1)))
+            dSum = dSum + (log(dmatValores(i,1)) * log(dmatValores(i,1)))
         end
     //Suma de los valores de y
     elseif iTipo == 5 then
         for i = 1: iRenglones
-            dSum = dSum + dMat(i,2)
+            dSum = dSum + dmatValores(i,2)
         end
     elseif iTipo == 6 then
         for i = 1: iRenglones
-            dSum = dSum + (dMat(i,2) * dMat(i,1))
+            dSum = dSum + (dmatValores(i,2) * dmatValores(i,1))
         end
     elseif iTipo == 7 then
         for i = 1: iRenglones
-            dSum = dSum + log(dMat(i,2))
+            dSum = dSum + log(dmatValores(i,2))
         end
     elseif iTipo == 8 then
         for i = 1: iRenglones
-            dSum = dSum + (log(dMat(i,2)) * dMat(i,1))
+            dSum = dSum + (log(dmatValores(i,2)) * dmatValores(i,1))
         end
     else
         for i = 1: iRenglones
-            dSum = dSum + (log(dMat(i,1)) * log(dMat(i,2)))
+            dSum = dSum + (log(dmatValores(i,1)) * log(dmatValores(i,2)))
         end
     end
 endfunction
@@ -1043,34 +1086,34 @@ endfunction
 //  Función que llena una matríz dependiendo del tipo de regresión 
 //
 //  Regresa:
-//  dMatrix = Matriz con los valores correspondientes
+//  dmatValues = Matriz con los valores correspondientes
 //
 /////////////////////////////////////////////////////////////////////
 
-function dMatrix = llenaMatriz(dMat,iTipo)
+function dmatValues = llenaMatriz(dMat,iTipo)
     //Cantidad de datos
     iCantidad = size(dMat,1)
     if iTipo == 1 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,5)
-        dMatrix(2,3) = sumatoria(dMat,6)
+        dmatValues(1,1) = iCantidad
+        dmatValues(1,2) = sumatoria(dMat,1)
+        dmatValues(2,1) = sumatoria(dMat,1)
+        dmatValues(2,2) = sumatoria(dMat,2)
+        dmatValues(1,3) = sumatoria(dMat,5)
+        dmatValues(2,3) = sumatoria(dMat,6)
     elseif iTipo == 2 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,8)
+        dmatValues(1,1) = iCantidad
+        dmatValues(1,2) = sumatoria(dMat,1)
+        dmatValues(2,1) = sumatoria(dMat,1)
+        dmatValues(2,2) = sumatoria(dMat,2)
+        dmatValues(1,3) = sumatoria(dMat,7)
+        dmatValues(2,3) = sumatoria(dMat,8)
     else
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,3)
-        dMatrix(2,1) = sumatoria(dMat,3)
-        dMatrix(2,2) = sumatoria(dMat,4)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,9)
+        dmatValues(1,1) = iCantidad
+        dmatValues(1,2) = sumatoria(dMat,3)
+        dmatValues(2,1) = sumatoria(dMat,3)
+        dmatValues(2,2) = sumatoria(dMat,4)
+        dmatValues(1,3) = sumatoria(dMat,7)
+        dmatValues(2,3) = sumatoria(dMat,9)
     end
 endfunction
 
@@ -1151,20 +1194,20 @@ endfunction
 
 
 /////////////////////////////////////////////////////////////////////
-//   iDet(dMatrix,iX,iY)
+//   iDet(dmatValores,iX,iY)
 // 
 //  Función que saca el determinante de una matriz de un valor de la matriz 
 //
 //  Parametros:
-//     dMatrix
+//     dmatValores
 //     iX: Coordenada X del valor de la matriz a evitar
 //     iY: Coordenada Y del valor de la matriz a evitar
 /////////////////////////////////////////////////////////////////////
-function iDeterminante =  iDet(dMatrix,iX,iY)
+function iDeterminante =  iDet(dmatValores,iX,iY)
      //Numero de renglones
-    iRenglones = size(dMatrix,1)
+    iRenglones = size(dmatValores,1)
     //Numero de columnas
-    iColumnas = size(dMatrix,2)
+    iColumnas = size(dmatValores,2)
     //Auxiliar
     iContador = 1
     iA = 1
@@ -1175,10 +1218,10 @@ function iDeterminante =  iDet(dMatrix,iX,iY)
             if i ~= iX & j ~= iY then
                 if iContador == 2 | iContador == 3 then
                     iContador = iContador + 1
-                    iB = iB * dMatrix(i,j)
+                    iB = iB * dmatValores(i,j)
                 else
                     iContador = iContador + 1
-                    iA = iA * dMatrix(i,j)
+                    iA = iA * dmatValores(i,j)
                 end
             end
         end
@@ -1192,46 +1235,46 @@ endfunction
 //  Función que saca la matriz de cofactores de una matriz
 //
 //  Parametros:
-//     dMatrix: Matriz de donde se obtienen los valores para sacar la
+//     dmatValores: Matriz de donde se obtienen los valores para sacar la
 //              matriz de cofactores.
 /////////////////////////////////////////////////////////////////////
 
-function Cofactores(dMatrix)
+function Cofactores(dmatValores)
     //Numero de renglones
-    iRenglones = size(dMatrix,1)
+    iRenglones = size(dmatValores,1)
     //Numero de columnas
-    iColumnas = size(dMatrix,2)
-    iAux = dMatrix
+    iColumnas = size(dmatValores,2)
+    iAux = dmatValores
     iSigno = 1
     for i = 1: iRenglones
         for j = 1: iColumnas
-            dMatrix(i,j) = iDet(iAux,i,j)*iSigno
+            dmatValores(i,j) = iDet(iAux,i,j)*iSigno
             iSigno = iSigno*-1
         end
     end
     disp("Matriz Cofactores")
-    ImprimeMatriz(dMatrix)
-    Transpose(dMatrix)
+    ImprimeMatriz(dmatValores)
+    Transpose(dmatValores)
 endfunction
 
 /////////////////////////////////////////////////////////////////////
-//  Transpose(dMatrix)
+//  Transpose(dmatMatrix)
 // 
 //  Función que saca la matriz transpuesta de una matriz
 //
 //  Parametros:
-//     dMatrix: Matriz de donde se obtienen los valores
+//     dmatMatrix: Matriz de donde se obtienen los valores
 /////////////////////////////////////////////////////////////////////
-function Transpose(dMatrix)
+function Transpose(dmatMatrix)
     //Numero de renglones
-    iRenglones = size(dMatrix,1)
+    iRenglones = size(dmatMatrix,1)
     //Numero de columnas
-    iColumnas = size(dMatrix,2)
+    iColumnas = size(dmatMatrix,2)
     //Matriz transpuesta
     iTranspose = 0
     for i = 1:iRenglones
         for j = 1:iColumnas
-            iTranspose(j,i) = dMatrix(i,j)
+            iTranspose(j,i) = dmatMatrix(i,j)
         end
     end
     disp("Matriz Cofactores Transpuesta")
@@ -1240,40 +1283,176 @@ function Transpose(dMatrix)
     InversaCofactores(iTranspose,iDeterminante)
 endfunction
 /////////////////////////////////////////////////////////////////////
-//   GetDeterminante(dMatrix)
+//   GetDeterminante(dmatMatrix)
 // 
 //  Función que saca el determinante inverso de una matriz
 //
 //  Parametros:
-//     dMatrix
+//     dmatMatrix
 //  Regresa:
 //     iDeterminante: Determinante inverso de la matriz
 /////////////////////////////////////////////////////////////////////
-function iDeterminante = GetDeterminante(dMatrix)
-    iDeterminante = 1/det(dMatrix)
+function iDeterminante = GetDeterminante(dmatMatrix)
+    iDeterminante = 1/det(dmatMatrix)
     // disp("Determinante: " + string(iDeterminante))
 endfunction
 
 /////////////////////////////////////////////////////////////////////
-//   InversaCofactores(dMatrix,iDeterminante)
+//   InversaCofactores(dmatValores,iDeterminante)
 // 
 //  Función que saca la matriz inversa de una matriz a través de la formula:
 //  Inversa: 1/determinante de la matriz * (Matriz de cofactores)
 //
 //  Parametros:
-//     dMatrix: A introducir datos
+//     dmatValores: A introducir datos
 /////////////////////////////////////////////////////////////////////
-function InversaCofactores(dMatrix,iDeterminante)
+function InversaCofactores(dmatValores,iDeterminante)
     //Numero de renglones
-    iRenglones = size(dMatrix,1)
+    iRenglones = size(dmatValores,1)
     //Numero de columnas
-    iColumnas = size(dMatrix,2)
+    iColumnas = size(dmatValores,2)
     for i = 1: iRenglones
         for j = 1: iColumnas
-            dMatrix(i,j) = dMatrix(i,j) * iDeterminante
+            dmatValores(i,j) = dmatValores(i,j) * iDeterminante
          end
     end
-    ImprimeMatriz(dMatrix)
+    ImprimeMatriz(dmatValores)
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Newton-Raphson para ecuaciones no lineales
+//
+//  Programa de integración por el metodo de newton-raphson
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  LeDatosNewton()
+//
+//  Pide los datos para integrar una ecuación por newton-raphson
+//  Regresa:
+//  dmatMartriz = Representa la ecuación en una matriz
+//  dX = Valor de X
+//  dY = Valor de Y
+/////////////////////////////////////////////////////////////////////
+
+function [dX, dY] = LeeDatosNewton()
+    dX = input("Introduzca la x: ")
+    dY = input("Introduzca la y: ")
+endfunction
+/////////////////////////////////////////////////////////////////////
+//  CalculaNewton()
+//
+//  Pide datos y se llena la matriz que se encuentra su integral
+//
+/////////////////////////////////////////////////////////////////////
+
+function CalculaNewton()
+    [sArgDeff1, sArgDeff2] = LeeFuncion2("FuncionNewton")
+// Leer datos iniciales
+    deff(sArgDeff1, sArgDeff2)
+    [dX,dY] = LeeDatosNewton()
+    disp("Funcion Newton: " + string(FuncionNewton(1.5,3.5)))
+endfunction
+///////////////////////////////////////////////////////////////////////////
+//     divisionSitentica(darrCoeficientes,dFactor,dCantidad)
+//
+//   Función que calcula 2 diviones sinteticas de acuerdo al metodo y regresa
+//   los valores para obtener el siguiente facot
+//
+//   Parametros:
+//    darrCoeficientes = Arreglo de datos con los coeficientes de la ecuación
+//    dCantidad = Cantidad de datos del arreglo
+//    dFactor = Valor inicial de las iteraciones
+///////////////////////////////////////////////////////////////////////////
+function [dPrimerValor, dSegundoValor] = divisionSintetica(darrCoeficientes, dCantidad, dFactor)
+    darrSoluciones(1) = darrCoeficientes(1)
+    for i = 2:dCantidad
+        darrSoluciones(i) = (darrSoluciones(i-1) * dFactor) +  darrCoeficientes(i)
+    end
+    for i = 1: dCantidad
+        disp(string(darrSoluciones(i)))
+    end
+    darrSoluciones2(1) = darrCoeficientes(1)
+    dPrimerValor = darrSoluciones(dCantidad)
+    for i = 2: dCantidad-1
+        darrSoluciones2(i) = (darrSoluciones2(i-1) * dFactor) +  darrSoluciones(i)
+    end
+    dSegundoValor = darrSoluciones2(dCantidad-1)
+endfunction
+///////////////////////////////////////////////////////////////////////////
+//     IteracionVieta(darrDatos,dFactor,dCantidad,dIteraciones)
+//
+//  Funcion que realiza las Iteraciones del metodo Birge Vieta hasta llegar
+//   al numero deseado de
+//
+//   Parametros:
+//    darrDatos = Arreglo de datos con los coeficientes de la ecuación
+//    dCantidad = Cantidad de datos del arreglo
+//    dFactor = Valor inicial de las iteraciones
+//    dIteraciones = Numero máximo de las iteraciones
+///////////////////////////////////////////////////////////////////////////
+function IteracionVieta(darrDatos,dFactor, dCantidad,dIteraciones)
+    //Inicalizamos el error con un valor muy grande
+    dErrorAbsAct = 99999.9
+    //Inicializamos las iteraciones que tenemos
+    dIteracionesActuales = 0
+    while (dIteracionesActuales <> dIteraciones)
+        //Obtenemos los primeros valores de la iteración
+        [dPrimerValor, dSegundoValor ] = divisionSintetica(darrDatos,dCantidad,dFactor)
+        dFactorPrevio = dFactor
+        dFactor = dFactor - dPrimerValor/dSegundoValor
+        if dIteracionesActuales <> 0 then
+            disp("Iteracion: " + string(dIteracionesActuales))
+            disp("Factor: " + string(dFactor))
+            disp("Error: " + string(abs(dFactor-dFactorPrevio) / abs(dFactor)))
+        else
+            disp("Iteracion: " + string(dIteracionesActuales))
+            disp("Factor: " + string(dFactor))
+        end
+        dIteracionesActuales = dIteracionesActuales + 1
+    end
+endfunction
+///////////////////////////////////////////////////////////////////////////
+// leeDatosVieata()
+//
+//  Funcion que pide los datos para BirgeVieta
+//
+//   Regresa:
+//    darrDatos = Arreglo de datos con los coeficientes de la ecuación
+//    dCantidad = Cantidad de datos del arreglo
+///////////////////////////////////////////////////////////////////////////
+function [darrDatos,dCantidad]  = leeDatosVieta()
+    dCantidad = input("¿Grado del polinomio? ")
+    dCantidad = dCantidad + 1
+    for i = 1: dCantidad
+        darrDatos(i) = input("Introduzca los coeficientes del polinomio, si en algún coeficiente no hay introduzca 0 ")
+    end
+    dFactor = input("¿Valor inicial? ")
+    dIteraciones = input("¿Cuantas iteraciones? ")
+    //Función que manda a llamar a iterar Birge Vieat
+    IteracionVieta(darrDatos,dFactor,dCantidad,dIteraciones)
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Birge Vieta
+//
+//  Programa que encuentra la raiz de una ecuación por el metodo de 
+//  Birge Vieta
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// CalculaVieta()
+//
+//  Funcion que manda a inicializar todos los valores necesarios para el 
+//  metodo de Birge Vieta
+//
+///////////////////////////////////////////////////////////////////////////
+function CalculaVieta()
+    [darrDatos,dCantidad] = leeDatosVieta()
 endfunction
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
@@ -1331,6 +1510,8 @@ function EcuacionesNoLineales()
             CalculaSecante()
         elseif (iOpciones == 4) then
             CalculaRegulaFalsi()
+        elseif (iOpciones == 5) then
+            CalculaVieta()
         end
     end
 endfunction
@@ -1439,6 +1620,9 @@ function Integracion()
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
         iOpciones = input(" Qué opción deseas (1-4) --> ")
+        if (iOpciones == 3) then
+            CalculaNewton()
+        end
 
     end
 
