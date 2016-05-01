@@ -1315,6 +1315,50 @@ endfunction
 
 
 /////////////////////////////////////////////////////////////////////
+//  InterNewtonDiff()
+//  Función que realiza una interpolación de diferencias difididas
+//  de Newton entre dos puntos recibidos
+//
+//      Parámetros:
+//          dmatPuntos: Los pares de puntos que se interpolarán
+//          dPred: El punto a predecir
+//
+/////////////////////////////////////////////////////////////////////
+function InterNewtonDiff(dmatPuntos, dPred)
+    disp(ascii(10))
+    sTitulo = "Interpolación por medio de Diferencias divididas de Newton"
+    disp("---------- " + sTitulo + " ----------")
+
+    iN = size(dmatPuntos, 1)
+    dDiferencia = dmatPuntos(2,1) - dmatPuntos(1,1)
+    dCoeficiente = (dPred - dmatPuntos(1,1)) / dDiferencia
+    dSuma = dmatPuntos(1,2)
+    for iT=1:iN - 1
+        for iJ=1:iN - iT
+            dmatInterP(iT,iJ) = dmatPuntos(iJ+1, 2) - dmatPuntos(iJ, 2)
+        end
+        for iJ=1:iN - iT
+            dmatPuntos(iJ, 2) = dmatInterP(iT,iJ)
+        end
+    end
+    for iT = 2:iN
+        dResMult = 1
+        for iJ = 1:iT - 1
+            dResMult = (dCoeficiente + 1 -iJ) * dResMult / iJ
+        end
+        dSuma = dSuma + dResMult * dmatInterP(iT-1,1)
+    end
+
+    // Imprime la predicción
+    disp('La predicción para el punto ingresado es: ');
+    disp(dSuma)
+    disp(ascii(10))
+
+endfunction
+
+
+
+/////////////////////////////////////////////////////////////////////
 //  leeDatosInterpolacion()
 //  Funcion que lee los datos necesarios para evaluar una integral
 //  de una función entre dos puntos.
@@ -1753,7 +1797,7 @@ function Interpolacion()
         if iOpciones == 1 then
             InterLagrange(dmatPuntos, dPred)
         elseif iOpciones == 2 then
-            DiferenciasDivididas(dmatPuntos, dPred)
+            InterNewtonDiff(dmatPuntos, dPred)
         end
     end
 endfunction
