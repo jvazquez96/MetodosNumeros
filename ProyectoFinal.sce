@@ -670,6 +670,143 @@ function CalculaBiseccion()
 
 endfunction
 
+/////////////////////////////////////////////////////////////////////
+//  SiguienteRegula(dXPrev,dXAct)
+//  
+//  Función que obtiene la siugiente X de acuerdo a la formula del metodo
+//
+//  Parametros:
+//     dXPrev    el valor de x Inferior
+//     dXAct     el valor de x Superior
+//  Regresa:
+//     dVal     la siguiente iteración de acuerdo a la función
+/////////////////////////////////////////////////////////////////////
+
+function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
+
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+    dPrimerValor = FuncionRegulaFalsi(dXPrev)
+    dSegundoValor = FuncionRegulaFalsi(dXAct)
+    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor) 
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  EvaluaRegula
+//  
+//  Evalua el valor de X en la función definida para regunla 
+//
+//  Parametros:
+//     dXPrev    el valor de x a evaluas
+//  Regresa:
+//     dVal     valor de x evaluado en la función
+/////////////////////////////////////////////////////////////////////
+
+function [dVal] = EvaluaRegula(dXValor)
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+    dVal = FuncionRegulaFalsi(dXValor)
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  IteraRegula()
+//
+//  Realiza las iteraciones para calcular la solución a la ecuación
+//  no lineal por medio del método de regula falsi
+//  Parametros:
+//     dXPrev    el valor de previo de x
+//     dXAct     el valor actual de x
+//     dErroAbsMeta el error maximo permitid
+//     iMaxIter Numero máximo de iteraciones
+//
+/////////////////////////////////////////////////////////////////////
+
+function IteraRegula(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
+
+    // Inicializa el valor del error de aproximación con un valor muy grande
+    dErrAbsAct = 99.9
+    iIterAct = 1
+    disp("Iteración #"+ string(iIterAct) + ":")
+    disp("X: "+ string(SiguienteRegula(dXPrev,dXAct)))
+    dEval = 99.0
+
+    // Mostrar todos los decimales en el proceso
+    format(25);
+    // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
+    // límite
+    while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
+        
+        // Se inicializa la variable con el valor promedio entre el promedio de los datos
+        dSiguienteX = SiguienteRegula(dXPrev,dXAct)
+
+        //Se guarda el valor previo 
+
+        dEval = EvaluaRegula(dSiguienteX)
+        // Se obtiene el valor de la X inicial evaluada en la función
+        dXEval = EvaluaRegula(dXPrev)
+
+        // Actualizar las X de acuerdo a su valor evaluado en la función
+        if dEval > 0 then
+            if dXEval > 0 then
+                dXPrev = dSiguienteX
+            else
+                dXAct = dSiguienteX
+            end
+        else
+            if dXEval > 0 then
+                dXAct = dSiguienteX
+            else
+                dXPrev = dSiguienteX
+            end
+        end
+
+        iIterAct = iIterAct + 1
+        // Calcula el error absoluto porcentual actual
+        dNewX = SiguienteRegula(dXPrev,dXAct)
+        dErrAbsAct = ((dNewX - dSiguienteX) / dNewX) * 100
+        disp("dNewX: " + string(dNewX))
+        disp("dSiguienteX: " + string(dSiguienteX))
+        disp("Iteración #"+ string(iIterAct) + ":")
+        disp("X: "+ string(SiguienteRegula(dXPrev,dXAct)))
+        disp("Error absoluto: "+ string(dErrAbsAct) + "%")
+    end
+
+    // Imprime la forma en la que se obtuvo la raiz dependiendo de cual
+    // haya sido el límite alcanzado
+    if iIterAct >= iMaxIter then
+        disp("La raiz fue aproximada con el numero de iteraciones dado")
+    elseif dErrAbsAct <= dErrAbsMeta then
+        disp("La raiz fue aproximada con el error absoluto porcentual")
+    elseif dEval == 0 then
+        disp("La raiz encontrada fue exacta")
+    end
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Regula Falsi: Solución de una Raíz de Una Ecuación No Lineal
+//
+//  Programa de Solución de una Raíz de Una Ecuación No Lineal
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  CalculaRegulaFalsi()
+//
+//  Pide una ecuación no lineal y calcula la solución de su raíz
+//
+/////////////////////////////////////////////////////////////////////
+
+function CalculaRegulaFalsi()
+// Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRegulaFalsi")
+// Lee los datos iniciales
+    [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
+// Calcula las iteraciones para calcular las raices
+    IteraRegula(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
+
+endfunction
 
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
@@ -723,6 +860,8 @@ function EcuacionesNoLineales()
             CalculaBiseccion()
         elseif (iOpciones == 3) then
             CalculaSecante()
+        elseif (iOpciones == 4) then
+            CalculaRegulaFalsi()
         end
     end
 endfunction
