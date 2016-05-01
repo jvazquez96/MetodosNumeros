@@ -1248,21 +1248,15 @@ function RegresionExponencial()
     Montante(dCompleteMatrix,2)
 
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
+// RegresiónPotencial()
 // Regresión Pontencial: Aproximación de una función a ciertos puntos
 //
-//  Programa de Solución de una función a ciertos puntos
-//
-// version 1.0
-///////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////
-//  RegresiónPotencial()
-//
-//  Pide datos y se llena la matriz que se resuelve por el metodo de montante
+//  Solución de una función a ciertos puntos
 //
 /////////////////////////////////////////////////////////////////////
-
 function RegresionPotencial()
 
 // Leer los datos iniciales
@@ -1273,6 +1267,76 @@ function RegresionPotencial()
     Montante(dCompleteMatrix,3)
 
 endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  InterLagrange()
+//  Función que realiza una interpolación de Lagrange entre dos
+//  puntos recibidos
+//
+//      Parámetros:
+//          dmatPuntos: Los pares de puntos que se interpolarán
+//          dPred: El punto a predecir
+//
+/////////////////////////////////////////////////////////////////////
+function InterLagrange(dmatPuntos, dPred)
+    disp(ascii(10))
+    sTitulo = "Interpolación por medio de Lagrange"
+    disp("--------------- " + sTitulo + " ---------------")
+    iT = size(dmatPuntos, 1)
+    // La tabla de diferencias
+    dmatDiff = ones(iT, 1)
+    dPredPunto = zeros(1, 1)
+
+    // Construir la tabla de diferencias
+    for i = 1:iT
+        for j = 1:iT
+            if i ~= j then
+                dNumerador = dmatDiff(i,:) .* (dPred - dmatPuntos(j, 1))
+                dDenom = dmatPuntos(i,1)-dmatPuntos(j,1)
+                // Evitar dividir entre cero
+                if iOpciones ~= 0
+                    dmatDiff(i, :) = dNumerador ./ dDenom
+                else
+                    dmatDiff(i, :) = 0
+                end
+            end
+        end
+    end
+    // Calcular el valor del punto a predecir
+    for i = 1:iT
+        dPredPunto = dPredPunto + dmatPuntos(i,2) * dmatDiff(i,:)
+    end
+    // Imprime la predicción
+    disp('La predicción para el punto ingresado es: ');
+    ImprimeMatriz(dPredPunto)
+    disp(ascii(10))
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  leeDatosInterpolacion()
+//  Funcion que lee los datos necesarios para evaluar una integral
+//  de una función entre dos puntos.
+//      Regresa:
+//          dmatPuntos: Los puntos que se interpolarán
+//          darrPred: Los puntos que serán predecidos con la función interpolada
+//
+/////////////////////////////////////////////////////////////////////
+function [dmatPuntos, dPred] = leeDatosInterpolacion()
+    // Lee los puntos de interpolación
+    iN = input(' Ingrese la cantidad de puntos a interpolar: ')
+    for iT = 1 : iN
+        sTexto = "Ingrese el punto #" + string(iT) + " en X: "
+        dmatPuntos(iT, 1) = input(sTexto)
+        sTexto = "Ingrese el punto #" + string(iT) + " en Y: "
+        dmatPuntos(iT, 2) = input(sTexto)
+    end
+
+    dPred = input(' Ingrese el punto a predecir: ')
+
+endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  IntegraTrapecios()
@@ -1532,6 +1596,7 @@ function Menu()
         disp("4. Interpolación")
         disp("5. Integración")
         disp("6. Salir")
+        disp(ascii(10))
         iOpciones = input(" Qué opción deseas (1-6) --> ")
         if (iOpciones == 1) then
             EcuacionesNoLineales()
@@ -1657,7 +1722,27 @@ endfunction
 
 function Interpolacion()
     iOpciones = 0
+    bPrimeraVez = %T
     while (iOpciones ~= 3)
+        sMensaje = ""
+        // Desplegar un mensaje diferente para la segunda vez que entre
+        if(bPrimeraVez == %T)
+            sMensaje = "Presiona enter para ingresar los datos a interpolar "
+        else
+            sMensaje = "Presiona 1 si deseas ingresar datos diferentes,"
+            sMensaje = sMensaje + ascii(10) + "2 "
+            sMensaje = sMensaje + "si deseas usar los datos anteriores de nuevo "
+        end
+        iOpciones = input(sMensaje +  "o 3 si deseas regresar --> ")
+        if(iOpciones == 3)
+            break
+        end
+        // Para permitir al usuario ingresar una los datos en todos los casos
+        // En la primera vez, forzosamente se tiene que leer la matriz
+        if(iOpciones ~= 3 & iOpciones ~= 2 | bPrimeraVez)
+            [dmatPuntos, dPred] = leeDatosInterpolacion()
+        end
+        bPrimeraVez = %F
         disp(ascii(10) + ascii(10))
         sTitulo = "Interpolación"
         disp("================ " + sTitulo + " ================")
@@ -1665,6 +1750,11 @@ function Interpolacion()
         disp("2. Diferencias Divididas de Newton")
         disp("3. Salir")
         iOpciones = input(" Qué opción deseas (1-3) --> ")
+        if iOpciones == 1 then
+            InterLagrange(dmatPuntos, dPred)
+        elseif iOpciones == 2 then
+            DiferenciasDivididas(dmatPuntos, dPred)
+        end
     end
 endfunction
 
