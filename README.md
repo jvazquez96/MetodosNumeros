@@ -51,20 +51,20 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Probado y funcionando // Se queda congelado a veces
 
 ### Ajuste de curvas
-- [ ] Regresión Lineal
+- [X] Regresión Lineal
     * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
-- [ ] Regresión Exponencial
+- [X] Regresión Exponencial
     * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
-- [ ] Regresión Potencial
+- [X] Regresión Potencial
     * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 - [ ] Inversa por cofactores
     * [X] Lo tenemos hecho
