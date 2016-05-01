@@ -31,8 +31,8 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones lineales
 - [ ] Cramer
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 - [X] Eliminación Gaussiana
@@ -85,12 +85,12 @@ Proyecto final de la clase de métodos numéricos
 ### Integración
 - [ ] Trapecio
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 - [ ] Simpson 1/3
     * [X] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 - [ ] Newton-Rapson para ecuaciones no lineales

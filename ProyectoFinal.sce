@@ -55,7 +55,7 @@ endfunction
 //  Imprime todas las celdas de una matriz recibida
 //
 //  Parametros:
-//     dMatrix: La matriz a ser impresa
+//     dmatValores: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
 function ImprimeMatriz(dmatValores)
     // Para cada renglon
@@ -146,11 +146,13 @@ function DespliegaArreglo(darrX)
     end
     disp("")
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
 //  DespliegaEcuacion()
 //
 //  Función que despliega los valores de las soluciones encontradas
-//  para la matriz 
+//  para la matriz
 //
 //  Parametros:
 //     darrX: El arreglo con las soluciones a las incógnitas
@@ -161,8 +163,69 @@ function DespliegaEcuacion(darrX, iTipo)
         disp("y=" + string(darrX(1,1)) + "+" + string(darrX(2,1)) + "x")
     elseif iTipo == 2 then
         disp("y=" + string(exp(darrX(1,1))) + " e^ "  + string(darrX(2,1)))
-    else 
+    else
            disp("y=" + string(exp(darrX(1,1))) + "^"  + string(darrX(2,1)))
+    end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
+//  Cramer()
+//
+//  Función calcula la solución a un sistema de ecuaciones lineales
+//  utilizando los determinantes por el método de Cramer.
+//
+//  Parametros:
+//     dmatValores: La matriz que contiene el sistema a resolver
+//
+///////////////////////////////////////////////////////////////////////////
+function Cramer(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por el método de Cramer"
+    disp("--------------- " + sTitulo + " ---------------")
+    dmatCuadrada = GetSimmetricMat(dmatValores)
+    dDetMat = det(dmatCuadrada)
+    //Tamaño de los renglones
+    iRenglones = size(dmatCuadrada,1)
+    //Tamaño de las columnas
+    iColumnas = size(dmatCuadrada,2)
+    iAumentada = size(dmatValores,2)
+
+    // Intercambia cada fila con la matriz aumentada y saca ese resultado
+    for i = 1: iColumnas
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, iAumentada)
+        end
+        darrSol(i, 1) = det(dmatCuadrada) / dDetMat
+        // Restaura el valor original de la columna
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, i)
+        end
+    end
+
+    // Despliega los valores de las incógnitas
+    disp('Las soluciones a las incógnitas son: ');
+    DespliegaArreglo(darrSol)
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+//  GetSimmetricMat()
+//
+//  Función que obtiene la matriz simetrica de una matriz
+//
+//  Parametros:
+//     dmatValores: La matriz asimetrica inicial
+//  Retorno:
+//     dmatSim: La matriz simétrica final
+///////////////////////////////////////////////////////////////////////////
+function [dmatSim] = GetSimmetricMat(dmatValores)
+    //Tamaño de las columnas
+    iRenglones = size(dmatValores,1)
+    for i = 1: iRenglones
+        for j = 1: iRenglones
+            dmatSim(i, j) = dmatValores(i, j)
+        end
     end
 endfunction
 
@@ -296,7 +359,6 @@ function EliminacionGaussJordan(dmatValores)
     ImprimeMatriz(dmatValores)
 
     // Encuentra los valores de las incógnitas
-    disp('Las soluciones a las incógnitas son: ');
     ExtraeSoluciones(dmatValores)
 
 endfunction
@@ -580,8 +642,8 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvalueBiseccion
-//  
-//  Evalua el valor de X en la función definida para bisección  
+//
+//  Evalua el valor de X en la función definida para bisección
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
@@ -625,7 +687,7 @@ function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDef
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dEval = EvaluaBiseccion((dXPrev + dXAct) / 2)
 
@@ -695,7 +757,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  SiguienteRegula(dXPrev,dXAct)
-//  
+//
 //  Función que obtiene la siugiente X de acuerdo a la formula del metodo
 //
 //  Parametros:
@@ -711,25 +773,25 @@ function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
     deff(sArgDeff1, sArgDeff2)
     dPrimerValor = FuncionRegulaFalsi(dXPrev)
     dSegundoValor = FuncionRegulaFalsi(dXAct)
-    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor) 
+    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor)
 endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvaluaRegula
-//  
-//  Evalua el valor de X en la función definida para regunla 
+//
+//  Evalua el valor de X en la función definida para regunla
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
 //  Regresa:
 //     dVal     valor de x evaluado en la función
 /////////////////////////////////////////////////////////////////////
-
 function [dVal] = EvaluaRegula(dXValor)
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     dVal = FuncionRegulaFalsi(dXValor)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  IteraRegula()
@@ -758,11 +820,11 @@ function IteraRegula(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dSiguienteX = SiguienteRegula(dXPrev,dXAct)
 
-        //Se guarda el valor previo 
+        //Se guarda el valor previo
 
         dEval = EvaluaRegula(dSiguienteX)
         // Se obtiene el valor de la X inicial evaluada en la función
@@ -958,7 +1020,7 @@ endfunction
 //  leedatosRegresión()
 //
 //  Función que lee datos para una matriz para regresiones
-//  
+//
 //  Regresa:
 //  dMat = Matriz con los datos introducidos por el usuario
 //
@@ -978,7 +1040,7 @@ endfunction
 //  sumatoria(dMat,iTipo)
 //
 //  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
-//  
+//
 //  Parametros:
 //  dMat = Matriz de donde se obtienen los datos
 //  iTipo = Entero que determina la sumatoria a obtener
@@ -1001,7 +1063,7 @@ function dSum = sumatoria(dMat,iTipo)
     elseif iTipo == 2 then
         for i = 1: iRenglones
             dSum = dSum + (dMat(i,1)*dMat(i,1))
-        end 
+        end
     //Suma de los valores de log(x)
     elseif iTipo == 3 then
         for i = 1: iRenglones
@@ -1040,37 +1102,37 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 //  llenaMatriz()
 //
-//  Función que llena una matríz dependiendo del tipo de regresión 
+//  Función que llena una matríz dependiendo del tipo de regresión
 //
 //  Regresa:
-//  dMatrix = Matriz con los valores correspondientes
+//  dmatValores = Matriz con los valores correspondientes
 //
 /////////////////////////////////////////////////////////////////////
 
-function dMatrix = llenaMatriz(dMat,iTipo)
+function dmatValores = llenaMatriz(dmatMatriz,iTipo)
     //Cantidad de datos
-    iCantidad = size(dMat,1)
+    iCantidad = size(dmatMatriz,1)
     if iTipo == 1 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,5)
-        dMatrix(2,3) = sumatoria(dMat,6)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,5)
+        dmatValores(2,3) = sumatoria(dmatMatriz,6)
     elseif iTipo == 2 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,8)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,8)
     else
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,3)
-        dMatrix(2,1) = sumatoria(dMat,3)
-        dMatrix(2,2) = sumatoria(dMat,4)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,9)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,3)
+        dmatValores(2,1) = sumatoria(dmatMatriz,3)
+        dmatValores(2,2) = sumatoria(dmatMatriz,4)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,9)
     end
 endfunction
 
@@ -1148,6 +1210,101 @@ function RegresionPotencial()
     Montante(dCompleteMatrix,3)
 
 endfunction
+
+/////////////////////////////////////////////////////////////////////
+//
+//  IntegraTrapecios()
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+//      Regresa:
+//          iResultado: La aproximación de la integral
+//
+/////////////////////////////////////////////////////////////////////
+function iResultado = IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    iFA = Evalua(dA)
+    iFB = Evalua(dB)
+    iSum = 0
+
+    // Obtiene el valor de la sumatoria
+    for i = 1: iN - 1
+        iSum = iSum + Evalua(i * iH)
+    end
+
+    // Calcula el resultado de acuerdo a la fórmula
+    iSum = iSum * 2
+    iResultado = (iH / 2) * (iFA + iSum + iFB)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//
+//  IntegraSimpson()
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+//      Regresa:
+//          iResultado: La aproximación de la integral
+//
+/////////////////////////////////////////////////////////////////////
+function iResultado = IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    // Obtiene el valor de la función evaluada en dA
+    iFA = Evalua(dA)
+
+    // Obtiene el valor de la función evaluada en dB
+    iFB = Evalua(dB)
+    iSum1 = 0
+    iSum2 = 0
+
+    // Obtiene el valor de la primera sumatoria
+    if (iN > 1)
+        for i = 1:2:(iN - 1)
+            iSum1 = iSum1 + Evalua(i * iH)
+        end
+        iSum1 = iSum1 * 4
+    end
+
+    // Obtiene el valor de la segunda sumatoria
+    if (iN > 2)
+        for i = 2:2:(iN - 2)
+            iSum2 = iSum2 + Evalua(i * iH)
+        end
+        iSum2 = iSum2 * 2
+    end
+    iResultado = (iH / 3) * (iFA + iSum1 + iSum2 + iFB)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//
+//  leeDatosIntegracion()
+//      Regresa:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//
+/////////////////////////////////////////////////////////////////////
+function [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+    // Lee los límites y el número de cortes
+    dA = input(' Ingrese el límite inferior: ')
+    dB = input(' Ingrese el límite superior: ')
+    iN = input(' Ingrese el número de cortes: ')
+
+    // Lee la función a ser integrada
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionIntegracion")
+
+endfunction
+
 
 
 /////////////////////////////////////////////////////////////////////
@@ -1282,6 +1439,8 @@ function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
+        // Limpiar la pantalla antes del menu de opciones
+        disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp("=================== Menu de opciones ===================")
         disp("1. Solución de ecuaciones no lineales")
@@ -1340,12 +1499,6 @@ function EcuacionesLineales()
     iOpciones = 0
     bPrimeraVez = %T
     while (iOpciones ~= 5)
-        iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
-        if iOpciones ~= 5 then 
-            dmatMatriz = LeeMatriz()
-        end
-        if iOpciones < 5 then
-            disp("Menu de opciones")
         sMensaje = ""
         // Desplegar un mensaje diferente para la segunda vez que entre
         if(bPrimeraVez == %T)
@@ -1373,7 +1526,9 @@ function EcuacionesLineales()
             disp("5. Salir")
             iOpciones = input(" Qué opción deseas (1-5) --> ")
 
-            if (iOpciones == 2) then
+            if (iOpciones == 1) then
+                Cramer(dmatValores)
+            elseif (iOpciones == 2) then
                 EliminacionGaussJordan(dmatValores)
             elseif (iOpciones == 3) then
                 EliminacionGaussiana(dmatValores)
@@ -1381,7 +1536,6 @@ function EcuacionesLineales()
                 Montante(dmatValores,5)
             end
         end
-    end
     end
 endfunction
 
@@ -1430,6 +1584,7 @@ endfunction
 
 function Integracion()
     iOpciones = 0
+    [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
     while (iOpciones ~= 4)
         disp(ascii(10) + ascii(10))
         sTitulo = "Integración"
@@ -1439,7 +1594,11 @@ function Integracion()
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
         iOpciones = input(" Qué opción deseas (1-4) --> ")
-
+        if iOpciones == 1 then
+            IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+        elseif iOpciones == 2 then
+            IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+        end
     end
 
 endfunction
