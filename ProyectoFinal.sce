@@ -155,17 +155,19 @@ function [sArgDeff1, sArgDeff2] = LeeFuncion2(sNombreFuncion)
     // Serie de reglas para manejar funciones ingresadas en otros formatos,
     if(strstr(sFunc,"y=") == ""& strstr(sFunc,'y =') == "") then
         // En caso de que el usuario ingrese una función de la forma f(x)='..
-        if(strstr(sFunc,'f(x,a)=') <> "") then
+        if(strstr(sFunc,'f(x,y)=') <> "") then
             sFunc = part(sFunc, 7:length(sFunc))
-        elseif(strstr(sFunc,'f(x,a) =') <> "") then
+        elseif(strstr(sFunc,'f(x,y) =') <> "") then
             sFunc = part(sFunc, 8:length(sFunc))
         end
-        sFunc = "[y]="+  sFunc
+        sFunc = "[z]="+  sFunc
     end
 
     // Establece los argumentos para declarar la funcion con deff
-    sArgDeff1 = 'y=' + sNombreFuncion + '(x,a)'
+    sArgDeff1 = 'z=' + sNombreFuncion + '(x,y)'
     sArgDeff2 = sFunc
+    disp("sArgDeff1: " + sArgDeff1)
+    disp("sArgDeff2: " + sArgDeff2)
 endfunction
 
 
@@ -1566,19 +1568,64 @@ endfunction
 // version 1.0
 ///////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+//  IteraNewton(iTeraciones,darrX,sArgDeff1,sArgDeff2....)
+//
+//  Programa que realiza las iteraciones del metodo newton-raphson para
+//  integral
+//
+//  Parametros:
+//  iTeraciones = Numero de iteraciones máximas a dar
+//  darrX = Arreglo que contiene el vector X
+//  sArgDeff1: El primer argumento para declarar la función
+//  sArgDeff2: El segundo argumento para deff
+//  and so on....
+//
+///////////////////////////////////////////////////////////////////////////
+
+function IteraNewton(iTeraciones, darrX, sArgDeff1,sArgDeff2,sArgDeff3,sArgDeff4,sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,sArgDeff11,sArgDeff12)
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+    deff(sArgDeff3, sArgDeff4)
+    deff(sArgDeff5, sArgDeff6)
+    deff(sArgDeff7, sArgDeff8)
+    deff(sArgDeff9, sArgDeff10)
+    deff(sArgDeff11,sArgDeff12)
+    iVal = sOriginal1(1,2)
+    disp("iVal: " + string(iVal))
+    for i = 1: iTeraciones
+        J = [sParcialX1(darrX(1),darrX(2)), sParcialY1(darrX(1),darrX(2)); sParcialX2(darrX(1),darrX(2)), sParcialY2(darrX(1),darrX(2))]
+        F = [sOriginal1(darrX(1),darrX(2)); sOriginal2(darrX(1),darrX(2))]
+        darrX  = darrX - inv(J) * F
+        disp(darrX)
+    end
+endfunction
+
+
 /////////////////////////////////////////////////////////////////////
 //  LeDatosNewton()
 //
 //  Pide los datos para integrar una ecuación por newton-raphson
-//  Regresa:
-//  dmatMartriz = Representa la ecuación en una matriz
-//  dX = Valor de X
-//  dY = Valor de Y
 /////////////////////////////////////////////////////////////////////
 
-function [dX, dY] = LeeDatosNewton()
-    dX = input("Introduzca la x: ")
-    dY = input("Introduzca la y: ")
+function LeeDatosNewton()
+    dX(1) = input("Introduzca la x: ")
+    dX(2) = input("Introduzca la y: ")
+    disp("Introduzca la primera equación")
+    [sArgDeff1, sArgDeff2] = LeeFuncion2("sOriginal1")
+    disp("Introduzca la segunda equación" )
+    [sArgDeff3, sArgDeff4] = LeeFuncion2("sOriginal2")
+    disp("Introduzca la derivada parcial con respecto a X de la primera ecuación ")
+    [sArgDeff5, sArgDeff6] = LeeFuncion2("sParcialX1")
+    disp("Introduzca la dervida parcial con respecto a Y de la primera ecuación ")
+    [sArgDeff7, sArgDeff8] = LeeFuncion2("sParcialY1")
+    disp("Introduzca la derivadar parcial con respecto a X de la segunda ecuación ")
+    [sArgDeff9, sArgDeff10] = LeeFuncion2("sParcialX2")
+    disp("Introduzca la derivada parcial con respecto a Y de la segunda ecuacuón")
+    [sArgDeff11, sArgDeff12] = LeeFuncion2("sParcialY2")
+    IteraNewton(1,dX,sArgDeff1,sArgDeff2,sArgDeff3,sArgDeff4,sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,sArgDeff11,sArgDeff12)
+
+
 endfunction
 /////////////////////////////////////////////////////////////////////
 //  CalculaNewton()
@@ -1588,11 +1635,8 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function CalculaNewton()
-    [sArgDeff1, sArgDeff2] = LeeFuncion2("FuncionNewton")
 // Leer datos iniciales
-    deff(sArgDeff1, sArgDeff2)
-    [dX,dY] = LeeDatosNewton()
-    disp("Funcion Newton: " + string(FuncionNewton(1.5,3.5)))
+    LeeDatosNewton()
 endfunction
 ///////////////////////////////////////////////////////////////////////////
 //     divisionSitentica(darrCoeficientes,dFactor,dCantidad)
@@ -1863,14 +1907,17 @@ function Integracion()
             sMensaje = sMensaje + ascii(10) + "2 "
             sMensaje = sMensaje + "si deseas usar la función anterior de nuevo "
         end
-        iOpciones = input(sMensaje +  "o 4 si deseas regresar --> ")
+        iOpciones = input(sMensaje +  "3 si quieres ir direectamente al menu, 4 si deseas regresar --> ")
         if(iOpciones == 4)
             break
         end
         // Para permitir al usuario ingresadr una matriz en todos los casos
         // En la primera vez, forzosamente se tiene que leer la matriz
-        if(iOpciones ~= 4 & iOpciones ~= 2 | bPrimeraVez)
-            [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+        // o checar si quiere ir directamente al metodo de Newton-Rapson
+        if(iOpciones ~= 4 & iOpciones ~= 2 | bPrimeraVez) then
+            if (iOpciones ~= 3) then
+                [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+            end
         end
         bPrimeraVez = %F
         disp(ascii(10) + ascii(10))
