@@ -75,6 +75,25 @@ function ImprimeMatriz(dmatValores)
 endfunction
 
 
+///////////////////////////////////////////////////////////////////////////
+//  ImprimeIntegral()
+//
+//  Imprime el resultado de una integración recibida
+//
+//  Parámetros:
+//      dA: El punto inicial desde donde se integra la función
+//      dB: El punto final hasta donde se integra la función
+//      sArgDeff2: La función que fue integrada
+//      dRes: El resultado obtenido
+///////////////////////////////////////////////////////////////////////////
+function ImprimeIntegral(dA, dB, sArgDeff2, dRes)
+    sResultado = "El resultado de la integral desde " + string(dA) + " hasta "
+    sResultado = sResultado + string(dB) + " para la función " + sArgDeff2
+    disp(sResultado + " es: ")
+    disp("    " + string(dRes))
+endfunction
+
+
 /////////////////////////////////////////////////////////////////////
 //
 //  LeeFuncion()
@@ -570,7 +589,6 @@ function CalculaSecante()
     // Calcula las iteraciones para calcular las raices
     IteraSecante(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
-
 endfunction
 
 
@@ -579,6 +597,13 @@ endfunction
 //
 //  Realiza las iteraciones para calcular la solución a la ecuación
 //  no lineal por medio del método de la secante.
+//  Parametros:
+//      dXPrev: El valor de X previo a la iteración actual
+//      dXAct: El valor de X en la iteración actual
+//      dErrAbsMeta: El error absoluto mínimo que se tiene como objetivo
+//      iMaxIter: La cantidad máxima de iteraciones que se pueden realizar
+//      sArgDeff1: El primer argumento para declarar la función
+//      sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
@@ -654,10 +679,12 @@ endfunction
 //  valores recibidos de dXPrev y dXAct y regresa el valor de dXSig.
 //
 //  Parametros:
-//     dXPrev    el valor de previo de x
-//     dXAct     el valor actual de x
+//      dXPrev    el valor de previo de x
+//      dXAct     el valor actual de x
+//      sArgDeff1: El primer argumento para declarar la función
+//      sArgDeff2: El segundo argumento para deff
 //  Regresa:
-//     dXSig     el siguiente valor de x
+//      dXSig     el siguiente valor de x
 /////////////////////////////////////////////////////////////////////
 function [dXSig] = IteraX(dXPrev, dXAct, sArgDeff1, sArgDeff2)
     //Declara la función a ser resuelta
@@ -700,6 +727,8 @@ endfunction
 //     dXAct     el valor actual de x
 //     dErroAbsMeta el error maximo permitid
 //     iMaxIter Numero máximo de iteraciones
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -777,11 +806,11 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function CalculaBiseccion()
-// Solicita la función a ser resuelta con el nombre de funcionBiseccion
+    // Solicita la función a ser resuelta con el nombre de funcionBiseccion
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionBiseccion")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraBiseccion(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
 endfunction
@@ -794,12 +823,13 @@ endfunction
 //  Parametros:
 //     dXPrev    el valor de x Inferior
 //     dXAct     el valor de x Superior
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //  Regresa:
 //     dVal     la siguiente iteración de acuerdo a la función
 /////////////////////////////////////////////////////////////////////
 
 function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
-
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     dPrimerValor = FuncionRegulaFalsi(dXPrev)
@@ -834,6 +864,8 @@ endfunction
 //     dXAct     el valor actual de x
 //     dErroAbsMeta el error maximo permitid
 //     iMaxIter Numero máximo de iteraciones
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -915,11 +947,11 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function CalculaRegulaFalsi()
-// Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+    // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRegulaFalsi")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraRegula(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
 endfunction
@@ -978,7 +1010,7 @@ endfunction
 //     iError     es el valor del error maximo
 //     iTeraciones es el valor maximo a iterar
 /////////////////////////////////////////////////////////////////////
-function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
+function IteraNewtonRaphson(iInicio, dErrAbsMeta, iMaxIter)
     //Inicializar variables
     dErrAbsAct = 9999999
     iIterAct = 1;
@@ -1038,11 +1070,11 @@ function [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
 
 endfunction
 function CalculaNewtonRaphson()
- // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+    // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRaphson")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraNewtonRaphson(dXInicio,dErrAbsMeta,iMaxIter)
 endfunction
 
@@ -1243,63 +1275,70 @@ function RegresionPotencial()
 endfunction
 
 /////////////////////////////////////////////////////////////////////
-//
 //  IntegraTrapecios()
+//  Función que aproxima el resultado de una integral evaluada en
+//  FuncionIntegración por el método de Trapecios
+//
 //      Parámetros:
 //          dA: El punto inicial desde donde se integra la función
 //          dB: El punto final hasta donde se integra la función
 //          iN: El número de divisiones a utilizar
-//
-//      Regresa:
-//          iResultado: La aproximación de la integral
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
-function iResultado = IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+function IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
     deff(sArgDeff1, sArgDeff2)
     iH = (dB - dA) / iN
-    iFA = Evalua(dA)
-    iFB = Evalua(dB)
+    iFA = FuncionIntegracion(dA)
+    iFB = FuncionIntegracion(dB)
     iSum = 0
 
     // Obtiene el valor de la sumatoria
     for i = 1: iN - 1
-        iSum = iSum + Evalua(i * iH)
+        iSum = iSum + FuncionIntegracion(i * iH)
     end
 
     // Calcula el resultado de acuerdo a la fórmula
     iSum = iSum * 2
-    iResultado = (iH / 2) * (iFA + iSum + iFB)
+    dResultado = (iH / 2) * (iFA + iSum + iFB)
+
+    // Imprime el resultado
+    disp(ascii(10))
+    sTitulo = "Integración por el método Trapecios con " + string(iN)
+    disp("---------- " + sTitulo + " cortes"  + " ----------")
+    ImprimeIntegral(dA, dB, sArgDeff2, dResultado)
 
 endfunction
 
 
 /////////////////////////////////////////////////////////////////////
-//
 //  IntegraSimpson()
+//  Función que aproxima el resultado de una integral evaluada en
+//  FuncionIntegración por el método de Simpson 1/3
 //      Parámetros:
 //          dA: El punto inicial desde donde se integra la función
 //          dB: El punto final hasta donde se integra la función
 //          iN: El número de divisiones a utilizar
-//
-//      Regresa:
-//          iResultado: La aproximación de la integral
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
-function iResultado = IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+function IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
     deff(sArgDeff1, sArgDeff2)
     iH = (dB - dA) / iN
     // Obtiene el valor de la función evaluada en dA
-    iFA = Evalua(dA)
+    iFA = FuncionIntegracion(dA)
 
     // Obtiene el valor de la función evaluada en dB
-    iFB = Evalua(dB)
+    iFB = FuncionIntegracion(dB)
     iSum1 = 0
     iSum2 = 0
 
     // Obtiene el valor de la primera sumatoria
     if (iN > 1)
         for i = 1:2:(iN - 1)
-            iSum1 = iSum1 + Evalua(i * iH)
+            iSum1 = iSum1 + FuncionIntegracion(i * iH)
         end
         iSum1 = iSum1 * 4
     end
@@ -1307,22 +1346,31 @@ function iResultado = IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
     // Obtiene el valor de la segunda sumatoria
     if (iN > 2)
         for i = 2:2:(iN - 2)
-            iSum2 = iSum2 + Evalua(i * iH)
+            iSum2 = iSum2 + FuncionIntegracion(i * iH)
         end
         iSum2 = iSum2 * 2
     end
-    iResultado = (iH / 3) * (iFA + iSum1 + iSum2 + iFB)
+    dResultado = (iH / 3) * (iFA + iSum1 + iSum2 + iFB)
+
+    // Imprime el resultado
+    disp(ascii(10))
+    sTitulo = "Integración por el método Simpson 1/3 con " + string(iN)
+    disp("---------- " + sTitulo + " cortes"  + " ----------")
+    ImprimeIntegral(dA, dB, sArgDeff2, dResultado)
 
 endfunction
 
 
 /////////////////////////////////////////////////////////////////////
-//
 //  leeDatosIntegracion()
+//  Funcion que lee los datos necesarios para evaluar una integral
+//  de una función entre dos puntos.
 //      Regresa:
 //          dA: El punto inicial desde donde se integra la función
 //          dB: El punto final hasta donde se integra la función
 //          iN: El número de divisiones a utilizar
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 function [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
@@ -1374,6 +1422,7 @@ function iDeterminante =  iDet(dMatrix,iX,iY)
     iDeterminante = iA - iB
 endfunction
 
+
 /////////////////////////////////////////////////////////////////////
 //   Cofactores()
 //
@@ -1383,7 +1432,6 @@ endfunction
 //     dMatrix: Matriz de donde se obtienen los valores para sacar la
 //              matriz de cofactores.
 /////////////////////////////////////////////////////////////////////
-
 function Cofactores(dMatrix)
     //Numero de renglones
     iRenglones = size(dMatrix,1)
@@ -1401,6 +1449,7 @@ function Cofactores(dMatrix)
     ImprimeMatriz(dMatrix)
     Transpose(dMatrix)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  Transpose(dMatrix)
@@ -1427,6 +1476,8 @@ function Transpose(dMatrix)
     iDeterminante = GetDeterminante(iAux)
     InversaCofactores(iTranspose,iDeterminante)
 endfunction
+
+
 /////////////////////////////////////////////////////////////////////
 //   GetDeterminante(dMatrix)
 //
@@ -1439,8 +1490,8 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 function iDeterminante = GetDeterminante(dMatrix)
     iDeterminante = 1/det(dMatrix)
-    // disp("Determinante: " + string(iDeterminante))
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //   InversaCofactores(dMatrix,iDeterminante)
@@ -1463,6 +1514,7 @@ function InversaCofactores(dMatrix,iDeterminante)
     end
     ImprimeMatriz(dMatrix)
 endfunction
+
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
@@ -1540,6 +1592,9 @@ function EcuacionesLineales()
             sMensaje = sMensaje + "si deseas usar la matriz anterior de nuevo "
         end
         iOpciones = input(sMensaje +  "o 5 si deseas regresar --> ")
+        if(iOpciones == 5)
+            break
+        end
         // Para permitir al usuario ingresar una matriz en todos los casos
         // En la primera vez, forzosamente se tiene que leer la matriz
         if(iOpciones ~= 5 & iOpciones ~= 2 | bPrimeraVez)
@@ -1616,8 +1671,27 @@ endfunction
 
 function Integracion()
     iOpciones = 0
-    [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+    bPrimeraVez = %T
     while (iOpciones ~= 4)
+        sMensaje = ""
+        // Desplegar un mensaje diferente para la segunda vez que entre
+        if(bPrimeraVez == %T)
+            sMensaje = "Presiona enter para ingresar una función a integrar "
+        else
+            sMensaje = "Presiona 1 si deseas ingresar una función diferente,"
+            sMensaje = sMensaje + ascii(10) + "2 "
+            sMensaje = sMensaje + "si deseas usar la función anterior de nuevo "
+        end
+        iOpciones = input(sMensaje +  "o 4 si deseas regresar --> ")
+        if(iOpciones == 4)
+            break
+        end
+        // Para permitir al usuario ingresadr una matriz en todos los casos
+        // En la primera vez, forzosamente se tiene que leer la matriz
+        if(iOpciones ~= 4 & iOpciones ~= 2 | bPrimeraVez)
+            [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+        end
+        bPrimeraVez = %F
         disp(ascii(10) + ascii(10))
         sTitulo = "Integración"
         disp("================ " + sTitulo + " ================")

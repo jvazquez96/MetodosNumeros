@@ -5,7 +5,7 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones no lineales
 - [X] Bisección
-    * [ ] Lo tenemos hecho
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
@@ -20,7 +20,7 @@ Proyecto final de la clase de métodos numéricos
     * [X] Probado y funcionando
 
 - [X] Regula Falsi
-    * [ ] Lo tenemos hecho
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
@@ -52,17 +52,17 @@ Proyecto final de la clase de métodos numéricos
 
 ### Ajuste de curvas
 - [X] Regresión Lineal
-    * [ ] Lo tenemos hecho
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
 - [X] Regresión Exponencial
-    * [ ] Lo tenemos hecho
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
 - [X] Regresión Potencial
-    * [ ] Lo tenemos hecho
+    * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
@@ -83,15 +83,15 @@ Proyecto final de la clase de métodos numéricos
     * [ ] Probado y funcionando
 
 ### Integración
-- [ ] Trapecio
+- [X] Trapecio
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
-- [ ] Simpson 1/3
+- [X] Simpson 1/3
     * [X] Lo tenemos hecho
     * [X] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Probado y funcionando
 
 - [ ] Newton-Rapson para ecuaciones no lineales
     * [ ] Lo tenemos hecho
