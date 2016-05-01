@@ -55,7 +55,7 @@ endfunction
 //  Imprime todas las celdas de una matriz recibida
 //
 //  Parametros:
-//     dMatrix: La matriz a ser impresa
+//     dmatValores: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
 function ImprimeMatriz(dmatValores)
     // Para cada renglon
@@ -359,7 +359,6 @@ function EliminacionGaussJordan(dmatValores)
     ImprimeMatriz(dmatValores)
 
     // Encuentra los valores de las incógnitas
-    disp('Las soluciones a las incógnitas son: ');
     ExtraeSoluciones(dmatValores)
 
 endfunction
@@ -983,34 +982,34 @@ endfunction
 //  Función que llena una matríz dependiendo del tipo de regresión
 //
 //  Regresa:
-//  dMatrix = Matriz con los valores correspondientes
+//  dmatValores = Matriz con los valores correspondientes
 //
 /////////////////////////////////////////////////////////////////////
 
-function dMatrix = llenaMatriz(dMat,iTipo)
+function dmatValores = llenaMatriz(dmatMatriz,iTipo)
     //Cantidad de datos
-    iCantidad = size(dMat,1)
+    iCantidad = size(dmatMatriz,1)
     if iTipo == 1 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,5)
-        dMatrix(2,3) = sumatoria(dMat,6)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,5)
+        dmatValores(2,3) = sumatoria(dmatMatriz,6)
     elseif iTipo == 2 then
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,1)
-        dMatrix(2,1) = sumatoria(dMat,1)
-        dMatrix(2,2) = sumatoria(dMat,2)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,8)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,8)
     else
-        dMatrix(1,1) = iCantidad
-        dMatrix(1,2) = sumatoria(dMat,3)
-        dMatrix(2,1) = sumatoria(dMat,3)
-        dMatrix(2,2) = sumatoria(dMat,4)
-        dMatrix(1,3) = sumatoria(dMat,7)
-        dMatrix(2,3) = sumatoria(dMat,9)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,3)
+        dmatValores(2,1) = sumatoria(dmatMatriz,3)
+        dmatValores(2,2) = sumatoria(dmatMatriz,4)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,9)
     end
 endfunction
 
@@ -1249,12 +1248,6 @@ function EcuacionesLineales()
     iOpciones = 0
     bPrimeraVez = %T
     while (iOpciones ~= 5)
-        iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
-        if iOpciones ~= 5 then
-            dmatMatriz = LeeMatriz()
-        end
-        if iOpciones < 5 then
-            disp("Menu de opciones")
         sMensaje = ""
         // Desplegar un mensaje diferente para la segunda vez que entre
         if(bPrimeraVez == %T)
@@ -1292,7 +1285,6 @@ function EcuacionesLineales()
                 Montante(dmatValores,5)
             end
         end
-    end
     end
 endfunction
 
@@ -1350,6 +1342,7 @@ function Integracion()
             IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
         elseif iOpciones == 2 then
             IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+        end
     end
 
 endfunction
