@@ -555,6 +555,122 @@ function [dXSig] = IteraX(dXPrev, dXAct, sArgDeff1, sArgDeff2)
     dXSig = dXAct - (dYAct * (dXPrev - dXAct)) / (dYPrev - dYAct)
 endfunction
 
+/////////////////////////////////////////////////////////////////////
+//  EvalueBiseccion
+//  
+//  Evalua el valor de X en la función definida para bisección  
+//
+//  Parametros:
+//     dXPrev    el valor de x a evaluas
+//  Regresa:
+//     dVal     valor de x evaluado en la función
+/////////////////////////////////////////////////////////////////////
+
+function [dVal] = EvaluaBiseccion(dX)
+    //Declara la función a ser resuelta
+    deff(sArgDeff1, sArgDeff2)
+
+    // Calcula el valor de X Evalueado
+    dVal = FuncionBiseccion(dX)
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  IteraBiseccion()
+//
+//  Realiza las iteraciones para calcular la solución a la ecuación
+//  no lineal por medio del método de biseccion
+//  Parametros:
+//     dXPrev    el valor de previo de x
+//     dXAct     el valor actual de x
+//     dErroAbsMeta el error maximo permitid
+//     iMaxIter Numero máximo de iteraciones
+//
+/////////////////////////////////////////////////////////////////////
+
+function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
+
+    dEval = EvaluaBiseccion(dXPrev)
+    // Inicializa el valor del error de aproximación con un valor muy grande
+    dErrAbsAct = 99.9
+    iIterAct = 1
+    disp("Iteración #"+ string(iIterAct) + ":")
+    disp("X: "+ string((dXPrev + dXAct) / 2))
+
+    // Mostrar todos los decimales en el proceso
+    format(25);
+
+    // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
+    // límite
+    while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
+        
+        // Se inicializa la variable con el valor promedio entre el promedio de los datos
+        dEval = EvaluaBiseccion((dXPrev + dXAct) / 2)
+
+        // Se obtiene el valor de la X inicial evaluada en la función
+        dXEval = EvaluaBiseccion(dXPrev)
+
+        // Actualizar las X de acuerdo a su valor evaluado en la función
+        if dEval > 0 then
+            if dXEval > 0 then
+                dXPrev = (dXPrev + dXAct) / 2
+            else
+                disp("Enters")
+                dXAct = (dXPrev + dXAct) / 2
+            end
+        else
+            if dXEval > 0 then
+                dXAct = (dXPrev + dXAct) / 2
+            else
+                dXPrev = (dXPrev + dXAct) / 2
+            end
+        end
+
+        iIterAct = iIterAct + 1
+        // Calcula el error absoluto porcentual actual
+        dErrAbsAct = ((dXAct - dXPrev) / dXAct) * 100
+        disp("Iteración #"+ string(iIterAct) + ":")
+        disp("X: "+ string((dXPrev + dXAct)/ 2))
+        disp("Error absoluto: "+ string(dErrAbsAct) + "%")
+    end
+
+    // Imprime la forma en la que se obtuvo la raiz dependiendo de cual
+    // haya sido el límite alcanzado
+    if iIterAct >= iMaxIter then
+        disp("La raiz fue aproximada con el numero de iteraciones dado")
+    elseif dErrAbsAct <= dErrAbsMeta then
+        disp("La raiz fue aproximada con el error absoluto porcentual")
+    elseif dEval == 0 then
+        disp("La raiz encontrada fue exacta")
+    end
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+// Biseccion: Solución de una Raíz de Una Ecuación No Lineal
+//
+//  Programa de Solución de una Raíz de Una Ecuación No Lineal
+//
+// version 1.0
+///////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+//  CalculaBiseccion()
+//
+//  Pide una ecuación no lineal y calcula la solución de su raíz
+//
+/////////////////////////////////////////////////////////////////////
+
+function CalculaBiseccion()
+// Solicita la función a ser resuelta con el nombre de funcionBiseccion
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionBiseccion")
+// Lee los datos iniciales
+    [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
+// Calcula las iteraciones para calcular las raices
+    IteraBiseccion(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
+
+endfunction
+
+
 
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
@@ -603,7 +719,9 @@ function EcuacionesNoLineales()
         disp("5. Birge Vieta")
         disp("6. Salir")
         iOpciones = input(" Qué opción deseas (1-6) --> ")
-        if (iOpciones == 3) then
+        if iOpciones == 1 then
+            CalculaBiseccion()
+        elseif (iOpciones == 3) then
             CalculaSecante()
         end
     end
@@ -655,6 +773,7 @@ function EcuacionesLineales()
                 Montante(dmatValores)
             end
         end
+    end
     end
 endfunction
 
