@@ -1027,6 +1027,132 @@ function RegresionPotencial()
 endfunction
 
 
+/////////////////////////////////////////////////////////////////////
+//   iDet(dMatrix,iX,iY)
+// 
+//  Función que saca el determinante de una matriz de un valor de la matriz 
+//
+//  Parametros:
+//     dMatrix
+//     iX: Coordenada X del valor de la matriz a evitar
+//     iY: Coordenada Y del valor de la matriz a evitar
+/////////////////////////////////////////////////////////////////////
+function iDeterminante =  iDet(dMatrix,iX,iY)
+     //Numero de renglones
+    iRenglones = size(dMatrix,1)
+    //Numero de columnas
+    iColumnas = size(dMatrix,2)
+    //Auxiliar
+    iContador = 1
+    iA = 1
+    iB = 1
+    iDeterminante = 0
+    for i = 1: iRenglones
+        for j = 1: iColumnas
+            if i ~= iX & j ~= iY then
+                if iContador == 2 | iContador == 3 then
+                    iContador = iContador + 1
+                    iB = iB * dMatrix(i,j)
+                else
+                    iContador = iContador + 1
+                    iA = iA * dMatrix(i,j)
+                end
+            end
+        end
+    end
+    iDeterminante = iA - iB
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//   Cofactores()
+// 
+//  Función que saca la matriz de cofactores de una matriz
+//
+//  Parametros:
+//     dMatrix: Matriz de donde se obtienen los valores para sacar la
+//              matriz de cofactores.
+/////////////////////////////////////////////////////////////////////
+
+function Cofactores(dMatrix)
+    //Numero de renglones
+    iRenglones = size(dMatrix,1)
+    //Numero de columnas
+    iColumnas = size(dMatrix,2)
+    iAux = dMatrix
+    iSigno = 1
+    for i = 1: iRenglones
+        for j = 1: iColumnas
+            dMatrix(i,j) = iDet(iAux,i,j)*iSigno
+            iSigno = iSigno*-1
+        end
+    end
+    disp("Matriz Cofactores")
+    ImprimeMatriz(dMatrix)
+    Transpose(dMatrix)
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//  Transpose(dMatrix)
+// 
+//  Función que saca la matriz transpuesta de una matriz
+//
+//  Parametros:
+//     dMatrix: Matriz de donde se obtienen los valores
+/////////////////////////////////////////////////////////////////////
+function Transpose(dMatrix)
+    //Numero de renglones
+    iRenglones = size(dMatrix,1)
+    //Numero de columnas
+    iColumnas = size(dMatrix,2)
+    //Matriz transpuesta
+    iTranspose = 0
+    for i = 1:iRenglones
+        for j = 1:iColumnas
+            iTranspose(j,i) = dMatrix(i,j)
+        end
+    end
+    disp("Matriz Cofactores Transpuesta")
+    ImprimeMatriz(iTranspose)
+    iDeterminante = GetDeterminante(iAux)
+    InversaCofactores(iTranspose,iDeterminante)
+endfunction
+/////////////////////////////////////////////////////////////////////
+//   GetDeterminante(dMatrix)
+// 
+//  Función que saca el determinante inverso de una matriz
+//
+//  Parametros:
+//     dMatrix
+//  Regresa:
+//     iDeterminante: Determinante inverso de la matriz
+/////////////////////////////////////////////////////////////////////
+function iDeterminante = GetDeterminante(dMatrix)
+    iDeterminante = 1/det(dMatrix)
+    // disp("Determinante: " + string(iDeterminante))
+endfunction
+
+/////////////////////////////////////////////////////////////////////
+//   InversaCofactores(dMatrix,iDeterminante)
+// 
+//  Función que saca la matriz inversa de una matriz a través de la formula:
+//  Inversa: 1/determinante de la matriz * (Matriz de cofactores)
+//
+//  Parametros:
+//     dMatrix: A introducir datos
+/////////////////////////////////////////////////////////////////////
+function InversaCofactores(dMatrix,iDeterminante)
+    //Numero de renglones
+    iRenglones = size(dMatrix,1)
+    //Numero de columnas
+    iColumnas = size(dMatrix,2)
+    for i = 1: iRenglones
+        for j = 1: iColumnas
+            dMatrix(i,j) = dMatrix(i,j) * iDeterminante
+         end
+    end
+    ImprimeMatriz(dMatrix)
+endfunction
+
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
 function Menu()
@@ -1138,6 +1264,8 @@ endfunction
 function AjusteDeCurvas()
     iOpciones = 0
     while (iOpciones ~= 5)
+        // Para permitir al usuario ingresar una matriz en todos los casos
+        // En la primera vez, forzosamente se tiene que leer la matriz
         disp(ascii(10) + ascii(10))
         sTitulo = "Ajuste de curvas"
         disp("================ " + sTitulo + " ================")
@@ -1153,6 +1281,9 @@ function AjusteDeCurvas()
             RegresionExponencial()
         elseif iOpciones == 3 then
             RegresionPotencial()
+        elseif iOpciones == 4 then
+            dMatMatriz = LeeMatriz()
+            Cofactores(dMatMatriz)
         end
     end
 endfunction
