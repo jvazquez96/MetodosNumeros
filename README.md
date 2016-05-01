@@ -19,10 +19,10 @@ Proyecto final de la clase de métodos numéricos
     * [X] Agregado al programa principal
     * [X] Probado y funcionando
 
-- [ ] Regula Falsi
+- [X] Regula Falsi
     * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
-    * [ ] Probado y funcionando
+    * [X] Agregado al programa principal
+    * [X] Probado y funcionando
 
 - [ ] Birge Vieta
     * [ ] Lo tenemos hecho
