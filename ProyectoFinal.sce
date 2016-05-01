@@ -55,7 +55,7 @@ endfunction
 //  Imprime todas las celdas de una matriz recibida
 //
 //  Parametros:
-//     dmatVAlores: La matriz a ser impresa
+//     dmatValores: La matriz a ser impresa
 ///////////////////////////////////////////////////////////////////////////
 function ImprimeMatriz(dmatValores)
     // Para cada renglon
@@ -72,6 +72,25 @@ function ImprimeMatriz(dmatValores)
         end
         disp(sLinea)
     end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
+//  ImprimeIntegral()
+//
+//  Imprime el resultado de una integración recibida
+//
+//  Parámetros:
+//      dA: El punto inicial desde donde se integra la función
+//      dB: El punto final hasta donde se integra la función
+//      sArgDeff2: La función que fue integrada
+//      dRes: El resultado obtenido
+///////////////////////////////////////////////////////////////////////////
+function ImprimeIntegral(dA, dB, sArgDeff2, dRes)
+    sResultado = "El resultado de la integral desde " + string(dA) + " hasta "
+    sResultado = sResultado + string(dB) + " para la función " + sArgDeff2
+    disp(sResultado + " es: ")
+    disp("    " + string(dRes))
 endfunction
 
 
@@ -163,7 +182,7 @@ endfunction
 //     dAprox   el valor de la nueva aproximación
 ///////////////////////////////////////////////////////////////////////////
 function [dAprox] = CalculaErrAbs(dPrev, dAct)
-    dAprox = ((dAct - dPrev) / dAct) * 100
+    dAprox = (abs(dAct - dPrev) / abs(dAct)) * 100
 endfunction
 
 
@@ -182,11 +201,13 @@ function DespliegaArreglo(darrX)
     end
     disp("")
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
 //  DespliegaEcuacion()
 //
 //  Función que despliega los valores de las soluciones encontradas
-//  para la matriz 
+//  para la matriz
 //
 //  Parametros:
 //     darrX: El arreglo con las soluciones a las incógnitas
@@ -197,8 +218,69 @@ function DespliegaEcuacion(darrX, iTipo)
         disp("y=" + string(darrX(1,1)) + "+" + string(darrX(2,1)) + "x")
     elseif iTipo == 2 then
         disp("y=" + string(exp(darrX(1,1))) + " e^ "  + string(darrX(2,1)))
-    else 
+    else
            disp("y=" + string(exp(darrX(1,1))) + "^"  + string(darrX(2,1)))
+    end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
+//  Cramer()
+//
+//  Función calcula la solución a un sistema de ecuaciones lineales
+//  utilizando los determinantes por el método de Cramer.
+//
+//  Parametros:
+//     dmatValores: La matriz que contiene el sistema a resolver
+//
+///////////////////////////////////////////////////////////////////////////
+function Cramer(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por el método de Cramer"
+    disp("--------------- " + sTitulo + " ---------------")
+    dmatCuadrada = GetSimmetricMat(dmatValores)
+    dDetMat = det(dmatCuadrada)
+    //Tamaño de los renglones
+    iRenglones = size(dmatCuadrada,1)
+    //Tamaño de las columnas
+    iColumnas = size(dmatCuadrada,2)
+    iAumentada = size(dmatValores,2)
+
+    // Intercambia cada fila con la matriz aumentada y saca ese resultado
+    for i = 1: iColumnas
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, iAumentada)
+        end
+        darrSol(i, 1) = det(dmatCuadrada) / dDetMat
+        // Restaura el valor original de la columna
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, i)
+        end
+    end
+
+    // Despliega los valores de las incógnitas
+    disp('Las soluciones a las incógnitas son: ');
+    DespliegaArreglo(darrSol)
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+//  GetSimmetricMat()
+//
+//  Función que obtiene la matriz simetrica de una matriz
+//
+//  Parametros:
+//     dmatValores: La matriz asimetrica inicial
+//  Retorno:
+//     dmatSim: La matriz simétrica final
+///////////////////////////////////////////////////////////////////////////
+function [dmatSim] = GetSimmetricMat(dmatValores)
+    //Tamaño de las columnas
+    iRenglones = size(dmatValores,1)
+    for i = 1: iRenglones
+        for j = 1: iRenglones
+            dmatSim(i, j) = dmatValores(i, j)
+        end
     end
 endfunction
 
@@ -231,26 +313,33 @@ function EliminacionGaussiana(dmatValores, iTipo)
     disp(ascii(10))
     sTitulo = "Solucion por medio de la Eliminación Gaussiana"
     disp("--------------- " + sTitulo + " ---------------")
-    iFactor = 0
+    dFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
     iColumnas = size(dmatValores,2)
     for i = 1: iRenglones - 1
         for k = i + 1: iRenglones
-            iFactor =  dmatValores(k,i) / dmatValores(i,i)
-            disp("Factor: "+ string(iFactor))
+            // Evitar divisiones entre cero
+            if dmatValores(i,i) ~= 0
+                dFactor =  dmatValores(k,i) / dmatValores(i,i)
+            else
+                dFactor =  0
+            end
+            disp("Factor: "+ string(dFactor))
             for j = i: iColumnas
-                dmatValores(k,j) = dmatValores(k,j) - iFactor*dmatValores(i,j)
+                dmatValores(k,j) = dmatValores(k,j) - dFactor*dmatValores(i,j)
             end
         end
     end
     // Imprimir la matriz en el estado reducido
+    disp("La matriz en estado reducido es: ")
     ImprimeMatriz(dmatValores)
 
     // Encontrar los valores de las incógnitas
     darrX = SustituyeHaciaAtras(dmatValores)
 
+    disp(ascii(10))
     // Despliega el arreglo de las soluciones encontradas
     disp('Las soluciones a las incógnitas son: ');
     DespliegaArreglo(darrX)
@@ -291,7 +380,7 @@ function EliminacionGaussJordan(dmatValores)
     disp(ascii(10))
     sTitulo = "Solucion por medio de la Eliminación Gauss-Jordan"
     disp("--------------- " + sTitulo + " ---------------")
-    iFactor = 0
+    dFactor = 0
     //Tamaño de los renglones
     iRenglones = size(dmatValores,1)
     //Tamaño de las columnas
@@ -313,7 +402,12 @@ function EliminacionGaussJordan(dmatValores)
                 // Si el actual no es el renglon pivote
                 if(k <> i) then
                     // Calcula el factor del primer elemento con el pivote
-                    dFactor =  dmatValores(k,i) / dmatValores(i,i)
+                    // Evitar divisiones entre cero
+                    if dmatValores(i,i) ~= 0
+                        dFactor =  dmatValores(k,i) / dmatValores(i,i)
+                    else
+                        dFactor =  0
+                    end
                     // Resta el factor * celda para hacer 0 el primer elemento
                     for j = 1: iColumnas
                         dMult = dFactor * dmatValores(i,j)
@@ -330,9 +424,9 @@ function EliminacionGaussJordan(dmatValores)
     // Imprime la matriz en el estado reducido
     disp('Matriz después de la eliminación Gauss-Jordan: ');
     ImprimeMatriz(dmatValores)
+    disp(ascii(10))
 
     // Encuentra los valores de las incógnitas
-    disp('Las soluciones a las incógnitas son: ');
     ExtraeSoluciones(dmatValores)
 
 endfunction
@@ -424,19 +518,32 @@ function Montante(dmatValores, iTipo)
         end
         //Actualizar el pivote
         iPivoteAnterior = dmatValores(i,i)
+
+        // Imprimir la matriz en el número de iteración actual
+        disp('Iteración #' + string(i));
         ImprimeMatriz(dmatValores)
     end
     //Igualar los pivotes anteriores con el ultimo pivote
     for i = 1: iRenglones-1
         dmatValores(i,i) = iPivoteAnterior
     end
+
+    // Imprime la matriz en el estado reducido
+    disp('Matriz después de la eliminación por el método Montante: ');
     ImprimeMatriz(dmatValores)
+    disp(ascii(10))
+
     //Dividir cada valor de la ultima columna entre el pivote
     for i = 1: iRenglones
-        X(i) = dmatValores(i,iColumnas) / iPivoteAnterior
+        // Evitar divisiones entre cero
+        if iPivoteAnterior ~= 0
+            X(i) = dmatValores(i,iColumnas) / iPivoteAnterior
+        else
+            X(i) = 0
+        end
     end
     // Despliega las soluciones de los valores a las incógnitas
-    disp('Soluciones a las incógnitas son: ');
+    disp('Las soluciones a las incógnitas son: ');
     if iTipo < 4 then
         DespliegaEcuacion(X,iTipo)
     else
@@ -473,6 +580,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
     //Obtener la primera solución
     if dmatValores(iRen, iRen) ~= 0
         darrX(iRen, 1) = dmatValores(iRen, iCol) / dmatValores(iRen, iRen)
+    else
+        // Evitar divisiones entre cero
+        darrX(iRen, 1) = 0
     end
     // Para cada renglon
     for i = iRen - 1: -1:1
@@ -482,7 +592,9 @@ function [darrX] = SustituyeHaciaAtras(dmatValores)
             iSuma = iSuma + dmatValores(i,j) * darrX(j);
         end
         if dmatValores(i,i) ~= 0
-            darrX(i) = (dmatValores(i,iCol) - iSuma) / dmatValores(i,i)
+            darrX(i) = (dmatValores(i, iCol) - iSuma) / dmatValores(i,i)
+        else
+            darrX(i) = 0
         end
     end
 
@@ -513,7 +625,6 @@ function CalculaSecante()
     // Calcula las iteraciones para calcular las raices
     IteraSecante(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
-
 endfunction
 
 
@@ -522,6 +633,13 @@ endfunction
 //
 //  Realiza las iteraciones para calcular la solución a la ecuación
 //  no lineal por medio del método de la secante.
+//  Parametros:
+//      dXPrev: El valor de X previo a la iteración actual
+//      dXAct: El valor de X en la iteración actual
+//      dErrAbsMeta: El error absoluto mínimo que se tiene como objetivo
+//      iMaxIter: La cantidad máxima de iteraciones que se pueden realizar
+//      sArgDeff1: El primer argumento para declarar la función
+//      sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
@@ -597,10 +715,12 @@ endfunction
 //  valores recibidos de dXPrev y dXAct y regresa el valor de dXSig.
 //
 //  Parametros:
-//     dXPrev    el valor de previo de x
-//     dXAct     el valor actual de x
+//      dXPrev    el valor de previo de x
+//      dXAct     el valor actual de x
+//      sArgDeff1: El primer argumento para declarar la función
+//      sArgDeff2: El segundo argumento para deff
 //  Regresa:
-//     dXSig     el siguiente valor de x
+//      dXSig     el siguiente valor de x
 /////////////////////////////////////////////////////////////////////
 function [dXSig] = IteraX(dXPrev, dXAct, sArgDeff1, sArgDeff2)
     //Declara la función a ser resuelta
@@ -616,8 +736,8 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvalueBiseccion
-//  
-//  Evalua el valor de X en la función definida para bisección  
+//
+//  Evalua el valor de X en la función definida para bisección
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
@@ -643,6 +763,8 @@ endfunction
 //     dXAct     el valor actual de x
 //     dErroAbsMeta el error maximo permitid
 //     iMaxIter Numero máximo de iteraciones
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -661,7 +783,7 @@ function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDef
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dEval = EvaluaBiseccion((dXPrev + dXAct) / 2)
 
@@ -720,52 +842,53 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function CalculaBiseccion()
-// Solicita la función a ser resuelta con el nombre de funcionBiseccion
+    // Solicita la función a ser resuelta con el nombre de funcionBiseccion
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionBiseccion")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraBiseccion(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
 endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  SiguienteRegula(dXPrev,dXAct)
-//  
+//
 //  Función que obtiene la siugiente X de acuerdo a la formula del metodo
 //
 //  Parametros:
 //     dXPrev    el valor de x Inferior
 //     dXAct     el valor de x Superior
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //  Regresa:
 //     dVal     la siguiente iteración de acuerdo a la función
 /////////////////////////////////////////////////////////////////////
 
 function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
-
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     dPrimerValor = FuncionRegulaFalsi(dXPrev)
     dSegundoValor = FuncionRegulaFalsi(dXAct)
-    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor) 
+    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor)
 endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvaluaRegula
-//  
-//  Evalua el valor de X en la función definida para regunla 
+//
+//  Evalua el valor de X en la función definida para regunla
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
 //  Regresa:
 //     dVal     valor de x evaluado en la función
 /////////////////////////////////////////////////////////////////////
-
 function [dVal] = EvaluaRegula(dXValor)
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     dVal = FuncionRegulaFalsi(dXValor)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  IteraRegula()
@@ -777,6 +900,8 @@ endfunction
 //     dXAct     el valor actual de x
 //     dErroAbsMeta el error maximo permitid
 //     iMaxIter Numero máximo de iteraciones
+//     sArgDeff1: El primer argumento para declarar la función
+//     sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
 
@@ -794,11 +919,11 @@ function IteraRegula(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dSiguienteX = SiguienteRegula(dXPrev,dXAct)
 
-        //Se guarda el valor previo 
+        //Se guarda el valor previo
 
         dEval = EvaluaRegula(dSiguienteX)
         // Se obtiene el valor de la X inicial evaluada en la función
@@ -858,25 +983,25 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function CalculaRegulaFalsi()
-// Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
+    // Solicita la función a ser resuelta con el nombre de FuncionRegulaFalsi
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRegulaFalsi")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXPrev, dXAct, dErrMeta, iMaxIter] = leeDatosSecante()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraRegula(dXPrev, dXAct, dErrMeta, iMaxIter, sArgDeff1, sArgDeff2)
 
 endfunction
 
 /////////////////////////////////////////////////////////////////////
 // iSiguiente
-//  Función que se encarga de calcular la siguiente aproximación de acuerdo a 
+//  Función que se encarga de calcular la siguiente aproximación de acuerdo a
 //  formula de la serie de Netwon-Raphson:
 //  iInicio - f(iIncio)/f'(iInicio)
-//   
-// 
+//
+//
 //  Parametros:
 //     iInicio    es el valor de donde empieza la serie
-//    
+//
 //  Regresa:
 //      iNuevo       la siguiente aproximación
 /////////////////////////////////////////////////////////////////////
@@ -896,8 +1021,8 @@ endfunction
 // iErrorAprox
 //  Función que se encarga de calcular el error aproximado de acuerdo a la
 //  formula: AproxNueva - AproxVieja / AproxNueva * 100
-//   
-// 
+//
+//
 //  Parametros:
 //     iVieja    es la aproximacion vieja
 //     iNueva     es la nueva aproximación
@@ -913,15 +1038,15 @@ function iE = iErrorAprox(iVieja,iNueva)
 endfunction
 /////////////////////////////////////////////////////////////////////
 //  Calcula
-//  Función que se encarga de mostrar el resultado aproximado de 
-//   la raiz 
-// 
+//  Función que se encarga de mostrar el resultado aproximado de
+//   la raiz
+//
 //  Parametros:
 //     iInicio    es el valor de X inicial
 //     iError     es el valor del error maximo
 //     iTeraciones es el valor maximo a iterar
 /////////////////////////////////////////////////////////////////////
-function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
+function IteraNewtonRaphson(iInicio, dErrAbsMeta, iMaxIter)
     //Inicializar variables
     dErrAbsAct = 9999999
     iIterAct = 1;
@@ -930,7 +1055,7 @@ function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
     iRaiz = 1
     deff(sArgDeff1, sArgDeff2)
     //Hacer el ciclo hasta que el error sea mayor o igual al error que pidio el
-    // usuario o hasta que se haya llegado al limite de ciclos pedido por el 
+    // usuario o hasta que se haya llegado al limite de ciclos pedido por el
     // usuario o hasta encontrar la raiz de la función
     while dErrAbsAct > dErrAbsMeta & iIterAct <= iMaxIter & iRaiz ~= 0
         if iIterAct == 1 then
@@ -948,11 +1073,10 @@ function IteraNewtonRaphson(iInicio,dErrAbsMeta,iMaxIter)
             disp("Valor nuevo: " + string(iNueva))
             dErrAbsAct = iErrorAprox(iViejo,iNueva)
             disp("Error aproximado: " + string(dErrAbsAct))
-            iMaxIter = iMaxIter + 1
             iRaiz = FuncionRaphson(iNueva);
-            
         end
-        
+
+        iIterAct = iIterAct + 1
         if iIterAct >= iMaxIter then
             disp("La raiz fue aproximada con el numero de iteraciones dado")
         elseif dErrAbsAct <= dErrAbsMeta then
@@ -990,9 +1114,9 @@ endfunction
 function CalculaNewtonRaphson()
  // Solicita la función a ser resuelta con el nombre de FuncionRaphson
     [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionRaphson")
-// Lee los datos iniciales
+    // Lee los datos iniciales
     [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
-// Calcula las iteraciones para calcular las raices
+    // Calcula las iteraciones para calcular las raices
     IteraNewtonRaphson(dXInicio,dErrAbsMeta,iMaxIter)
 endfunction
 
@@ -1001,7 +1125,7 @@ endfunction
 //  leedatosRegresión()
 //
 //  Función que lee datos para una matriz para regresiones
-//  
+//
 //  Regresa:
 //  dmatValores = Matriz con los datos introducidos por el usuario
 //
@@ -1021,7 +1145,7 @@ endfunction
 //  sumatoria(dMat,iTipo)
 //
 //  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
-//  
+//
 //  Parametros:
 //  dmatValores = Matriz de donde se obtienen los datos
 //  iTipo = Entero que determina la sumatoria a obtener
@@ -1083,37 +1207,37 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 //  llenaMatriz()
 //
-//  Función que llena una matríz dependiendo del tipo de regresión 
+//  Función que llena una matríz dependiendo del tipo de regresión
 //
 //  Regresa:
-//  dmatValues = Matriz con los valores correspondientes
+//  dmatValores = Matriz con los valores correspondientes
 //
 /////////////////////////////////////////////////////////////////////
 
-function dmatValues = llenaMatriz(dMat,iTipo)
+function dmatValores = llenaMatriz(dmatMatriz,iTipo)
     //Cantidad de datos
-    iCantidad = size(dMat,1)
+    iCantidad = size(dmatMatriz,1)
     if iTipo == 1 then
-        dmatValues(1,1) = iCantidad
-        dmatValues(1,2) = sumatoria(dMat,1)
-        dmatValues(2,1) = sumatoria(dMat,1)
-        dmatValues(2,2) = sumatoria(dMat,2)
-        dmatValues(1,3) = sumatoria(dMat,5)
-        dmatValues(2,3) = sumatoria(dMat,6)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,5)
+        dmatValores(2,3) = sumatoria(dmatMatriz,6)
     elseif iTipo == 2 then
-        dmatValues(1,1) = iCantidad
-        dmatValues(1,2) = sumatoria(dMat,1)
-        dmatValues(2,1) = sumatoria(dMat,1)
-        dmatValues(2,2) = sumatoria(dMat,2)
-        dmatValues(1,3) = sumatoria(dMat,7)
-        dmatValues(2,3) = sumatoria(dMat,8)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,1)
+        dmatValores(2,1) = sumatoria(dmatMatriz,1)
+        dmatValores(2,2) = sumatoria(dmatMatriz,2)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,8)
     else
-        dmatValues(1,1) = iCantidad
-        dmatValues(1,2) = sumatoria(dMat,3)
-        dmatValues(2,1) = sumatoria(dMat,3)
-        dmatValues(2,2) = sumatoria(dMat,4)
-        dmatValues(1,3) = sumatoria(dMat,7)
-        dmatValues(2,3) = sumatoria(dMat,9)
+        dmatValores(1,1) = iCantidad
+        dmatValores(1,2) = sumatoria(dmatMatriz,3)
+        dmatValores(2,1) = sumatoria(dmatMatriz,3)
+        dmatValores(2,2) = sumatoria(dmatMatriz,4)
+        dmatValores(1,3) = sumatoria(dmatMatriz,7)
+        dmatValores(2,3) = sumatoria(dmatMatriz,9)
     end
 endfunction
 
@@ -1192,6 +1316,117 @@ function RegresionPotencial()
 
 endfunction
 
+/////////////////////////////////////////////////////////////////////
+//  IntegraTrapecios()
+//  Función que aproxima el resultado de una integral evaluada en
+//  FuncionIntegración por el método de Trapecios
+//
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
+//
+/////////////////////////////////////////////////////////////////////
+function IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    iFA = FuncionIntegracion(dA)
+    iFB = FuncionIntegracion(dB)
+    iSum = 0
+
+    // Obtiene el valor de la sumatoria
+    for i = 1: iN - 1
+        iSum = iSum + FuncionIntegracion(i * iH)
+    end
+
+    // Calcula el resultado de acuerdo a la fórmula
+    iSum = iSum * 2
+    dResultado = (iH / 2) * (iFA + iSum + iFB)
+
+    // Imprime el resultado
+    disp(ascii(10))
+    sTitulo = "Integración por el método Trapecios con " + string(iN)
+    disp("---------- " + sTitulo + " cortes"  + " ----------")
+    ImprimeIntegral(dA, dB, sArgDeff2, dResultado)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  IntegraSimpson()
+//  Función que aproxima el resultado de una integral evaluada en
+//  FuncionIntegración por el método de Simpson 1/3
+//      Parámetros:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
+//
+/////////////////////////////////////////////////////////////////////
+function IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+    deff(sArgDeff1, sArgDeff2)
+    iH = (dB - dA) / iN
+    // Obtiene el valor de la función evaluada en dA
+    iFA = FuncionIntegracion(dA)
+
+    // Obtiene el valor de la función evaluada en dB
+    iFB = FuncionIntegracion(dB)
+    iSum1 = 0
+    iSum2 = 0
+
+    // Obtiene el valor de la primera sumatoria
+    if (iN > 1)
+        for i = 1:2:(iN - 1)
+            iSum1 = iSum1 + FuncionIntegracion(i * iH)
+        end
+        iSum1 = iSum1 * 4
+    end
+
+    // Obtiene el valor de la segunda sumatoria
+    if (iN > 2)
+        for i = 2:2:(iN - 2)
+            iSum2 = iSum2 + FuncionIntegracion(i * iH)
+        end
+        iSum2 = iSum2 * 2
+    end
+    dResultado = (iH / 3) * (iFA + iSum1 + iSum2 + iFB)
+
+    // Imprime el resultado
+    disp(ascii(10))
+    sTitulo = "Integración por el método Simpson 1/3 con " + string(iN)
+    disp("---------- " + sTitulo + " cortes"  + " ----------")
+    ImprimeIntegral(dA, dB, sArgDeff2, dResultado)
+
+endfunction
+
+
+/////////////////////////////////////////////////////////////////////
+//  leeDatosIntegracion()
+//  Funcion que lee los datos necesarios para evaluar una integral
+//  de una función entre dos puntos.
+//      Regresa:
+//          dA: El punto inicial desde donde se integra la función
+//          dB: El punto final hasta donde se integra la función
+//          iN: El número de divisiones a utilizar
+//          sArgDeff1: El primer argumento para declarar la función
+//          sArgDeff2: El segundo argumento para deff
+//
+/////////////////////////////////////////////////////////////////////
+function [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+    // Lee los límites y el número de cortes
+    dA = input(' Ingrese el límite inferior: ')
+    dB = input(' Ingrese el límite superior: ')
+    iN = input(' Ingrese el número de cortes: ')
+
+    // Lee la función a ser integrada
+    [sArgDeff1, sArgDeff2] = LeeFuncion("FuncionIntegracion")
+
+endfunction
+
+
 
 /////////////////////////////////////////////////////////////////////
 //   iDet(dmatValores,iX,iY)
@@ -1229,16 +1464,16 @@ function iDeterminante =  iDet(dmatValores,iX,iY)
     iDeterminante = iA - iB
 endfunction
 
+
 /////////////////////////////////////////////////////////////////////
 //   Cofactores()
-// 
+//
 //  Función que saca la matriz de cofactores de una matriz
 //
 //  Parametros:
 //     dmatValores: Matriz de donde se obtienen los valores para sacar la
 //              matriz de cofactores.
 /////////////////////////////////////////////////////////////////////
-
 function Cofactores(dmatValores)
     //Numero de renglones
     iRenglones = size(dmatValores,1)
@@ -1256,6 +1491,7 @@ function Cofactores(dmatValores)
     ImprimeMatriz(dmatValores)
     Transpose(dmatValores)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  Transpose(dmatMatrix)
@@ -1282,6 +1518,8 @@ function Transpose(dmatMatrix)
     iDeterminante = GetDeterminante(iAux)
     InversaCofactores(iTranspose,iDeterminante)
 endfunction
+
+
 /////////////////////////////////////////////////////////////////////
 //   GetDeterminante(dmatMatrix)
 // 
@@ -1294,12 +1532,13 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 function iDeterminante = GetDeterminante(dmatMatrix)
     iDeterminante = 1/det(dmatMatrix)
-    // disp("Determinante: " + string(iDeterminante))
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //   InversaCofactores(dmatValores,iDeterminante)
 // 
+//
 //  Función que saca la matriz inversa de una matriz a través de la formula:
 //  Inversa: 1/determinante de la matriz * (Matriz de cofactores)
 //
@@ -1455,12 +1694,15 @@ function CalculaVieta()
     [darrDatos,dCantidad] = leeDatosVieta()
 endfunction
 
+
 ////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
 function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
+        // Limpiar la pantalla antes del menu de opciones
+        disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp("=================== Menu de opciones ===================")
         disp("1. Solución de ecuaciones no lineales")
@@ -1521,21 +1763,19 @@ function EcuacionesLineales()
     iOpciones = 0
     bPrimeraVez = %T
     while (iOpciones ~= 5)
-        iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
-        if iOpciones ~= 5 then 
-            dmatMatriz = LeeMatriz()
-        end
-        if iOpciones < 5 then
-            disp("Menu de opciones")
         sMensaje = ""
         // Desplegar un mensaje diferente para la segunda vez que entre
         if(bPrimeraVez == %T)
             sMensaje = "Presiona enter para ingresar una matriz "
         else
-            sMensaje = "Persiona 1 si deseas ingresar una matriz diferente, 2 "
+            sMensaje = "Presiona 1 si deseas ingresar una matriz diferente,"
+            sMensaje = sMensaje + ascii(10) + "2 "
             sMensaje = sMensaje + "si deseas usar la matriz anterior de nuevo "
         end
         iOpciones = input(sMensaje +  "o 5 si deseas regresar --> ")
+        if(iOpciones == 5)
+            break
+        end
         // Para permitir al usuario ingresar una matriz en todos los casos
         // En la primera vez, forzosamente se tiene que leer la matriz
         if(iOpciones ~= 5 & iOpciones ~= 2 | bPrimeraVez)
@@ -1554,15 +1794,16 @@ function EcuacionesLineales()
             disp("5. Salir")
             iOpciones = input(" Qué opción deseas (1-5) --> ")
 
-            if (iOpciones == 2) then
-                EliminacionGaussJordan(dmatValores)
-            elseif (iOpciones == 3) then
+            if (iOpciones == 1) then
+                Cramer(dmatValores)
+            elseif (iOpciones == 2) then
                 EliminacionGaussiana(dmatValores)
+            elseif (iOpciones == 3) then
+                EliminacionGaussJordan(dmatValores)
             elseif (iOpciones == 4) then
                 Montante(dmatValores,5)
             end
         end
-    end
     end
 endfunction
 
@@ -1611,7 +1852,27 @@ endfunction
 
 function Integracion()
     iOpciones = 0
+    bPrimeraVez = %T
     while (iOpciones ~= 4)
+        sMensaje = ""
+        // Desplegar un mensaje diferente para la segunda vez que entre
+        if(bPrimeraVez == %T)
+            sMensaje = "Presiona enter para ingresar una función a integrar "
+        else
+            sMensaje = "Presiona 1 si deseas ingresar una función diferente,"
+            sMensaje = sMensaje + ascii(10) + "2 "
+            sMensaje = sMensaje + "si deseas usar la función anterior de nuevo "
+        end
+        iOpciones = input(sMensaje +  "o 4 si deseas regresar --> ")
+        if(iOpciones == 4)
+            break
+        end
+        // Para permitir al usuario ingresadr una matriz en todos los casos
+        // En la primera vez, forzosamente se tiene que leer la matriz
+        if(iOpciones ~= 4 & iOpciones ~= 2 | bPrimeraVez)
+            [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
+        end
+        bPrimeraVez = %F
         disp(ascii(10) + ascii(10))
         sTitulo = "Integración"
         disp("================ " + sTitulo + " ================")
@@ -1620,10 +1881,13 @@ function Integracion()
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
         iOpciones = input(" Qué opción deseas (1-4) --> ")
-        if (iOpciones == 3) then
+        if iOpciones == 1 then
+            IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
+        elseif iOpciones == 2 then
+            IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
+        elseif iOpciones == 3 then
             CalculaNewton()
         end
-
     end
 
 endfunction
