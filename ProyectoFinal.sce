@@ -146,11 +146,13 @@ function DespliegaArreglo(darrX)
     end
     disp("")
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
 //  DespliegaEcuacion()
 //
 //  Función que despliega los valores de las soluciones encontradas
-//  para la matriz 
+//  para la matriz
 //
 //  Parametros:
 //     darrX: El arreglo con las soluciones a las incógnitas
@@ -161,8 +163,69 @@ function DespliegaEcuacion(darrX, iTipo)
         disp("y=" + string(darrX(1,1)) + "+" + string(darrX(2,1)) + "x")
     elseif iTipo == 2 then
         disp("y=" + string(exp(darrX(1,1))) + " e^ "  + string(darrX(2,1)))
-    else 
+    else
            disp("y=" + string(exp(darrX(1,1))) + "^"  + string(darrX(2,1)))
+    end
+endfunction
+
+
+///////////////////////////////////////////////////////////////////////////
+//  Cramer()
+//
+//  Función calcula la solución a un sistema de ecuaciones lineales
+//  utilizando los determinantes por el método de Cramer.
+//
+//  Parametros:
+//     dmatValores: La matriz que contiene el sistema a resolver
+//
+///////////////////////////////////////////////////////////////////////////
+function Cramer(dmatValores)
+    disp(ascii(10))
+    sTitulo = "Solucion por el método de Cramer"
+    disp("--------------- " + sTitulo + " ---------------")
+    dmatCuadrada = GetSimmetricMat(dmatValores)
+    dDetMat = det(dmatCuadrada)
+    //Tamaño de los renglones
+    iRenglones = size(dmatCuadrada,1)
+    //Tamaño de las columnas
+    iColumnas = size(dmatCuadrada,2)
+    iAumentada = size(dmatValores,2)
+
+    // Intercambia cada fila con la matriz aumentada y saca ese resultado
+    for i = 1: iColumnas
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, iAumentada)
+        end
+        darrSol(i, 1) = det(dmatCuadrada) / dDetMat
+        // Restaura el valor original de la columna
+        for j = 1: iRenglones
+            dmatCuadrada(i,j) = dmatValores(j, i)
+        end
+    end
+
+    // Despliega los valores de las incógnitas
+    disp('Las soluciones a las incógnitas son: ');
+    DespliegaArreglo(darrSol)
+
+endfunction
+
+///////////////////////////////////////////////////////////////////////////
+//  GetSimmetricMat()
+//
+//  Función que obtiene la matriz simetrica de una matriz
+//
+//  Parametros:
+//     dmatValores: La matriz asimetrica inicial
+//  Retorno:
+//     dmatSim: La matriz simétrica final
+///////////////////////////////////////////////////////////////////////////
+function [dmatSim] = GetSimmetricMat(dmatValores)
+    //Tamaño de las columnas
+    iRenglones = size(dmatValores,1)
+    for i = 1: iRenglones
+        for j = 1: iRenglones
+            dmatSim(i, j) = dmatValores(i, j)
+        end
     end
 endfunction
 
@@ -580,8 +643,8 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvalueBiseccion
-//  
-//  Evalua el valor de X en la función definida para bisección  
+//
+//  Evalua el valor de X en la función definida para bisección
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
@@ -625,7 +688,7 @@ function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDef
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dEval = EvaluaBiseccion((dXPrev + dXAct) / 2)
 
@@ -695,7 +758,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  SiguienteRegula(dXPrev,dXAct)
-//  
+//
 //  Función que obtiene la siugiente X de acuerdo a la formula del metodo
 //
 //  Parametros:
@@ -711,25 +774,25 @@ function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
     deff(sArgDeff1, sArgDeff2)
     dPrimerValor = FuncionRegulaFalsi(dXPrev)
     dSegundoValor = FuncionRegulaFalsi(dXAct)
-    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor) 
+    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor)
 endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  EvaluaRegula
-//  
-//  Evalua el valor de X en la función definida para regunla 
+//
+//  Evalua el valor de X en la función definida para regunla
 //
 //  Parametros:
 //     dXPrev    el valor de x a evaluas
 //  Regresa:
 //     dVal     valor de x evaluado en la función
 /////////////////////////////////////////////////////////////////////
-
 function [dVal] = EvaluaRegula(dXValor)
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     dVal = FuncionRegulaFalsi(dXValor)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  IteraRegula()
@@ -758,11 +821,11 @@ function IteraRegula(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
     // Realiza las iteraciones y actualiza los valores de X hasta alcanzar un
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
-        
+
         // Se inicializa la variable con el valor promedio entre el promedio de los datos
         dSiguienteX = SiguienteRegula(dXPrev,dXAct)
 
-        //Se guarda el valor previo 
+        //Se guarda el valor previo
 
         dEval = EvaluaRegula(dSiguienteX)
         // Se obtiene el valor de la X inicial evaluada en la función
@@ -835,7 +898,7 @@ endfunction
 //  leedatosRegresión()
 //
 //  Función que lee datos para una matriz para regresiones
-//  
+//
 //  Regresa:
 //  dMat = Matriz con los datos introducidos por el usuario
 //
@@ -855,7 +918,7 @@ endfunction
 //  sumatoria(dMat,iTipo)
 //
 //  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
-//  
+//
 //  Parametros:
 //  dMat = Matriz de donde se obtienen los datos
 //  iTipo = Entero que determina la sumatoria a obtener
@@ -878,7 +941,7 @@ function dSum = sumatoria(dMat,iTipo)
     elseif iTipo == 2 then
         for i = 1: iRenglones
             dSum = dSum + (dMat(i,1)*dMat(i,1))
-        end 
+        end
     //Suma de los valores de log(x)
     elseif iTipo == 3 then
         for i = 1: iRenglones
@@ -917,7 +980,7 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 //  llenaMatriz()
 //
-//  Función que llena una matríz dependiendo del tipo de regresión 
+//  Función que llena una matríz dependiendo del tipo de regresión
 //
 //  Regresa:
 //  dMatrix = Matriz con los valores correspondientes
@@ -1033,6 +1096,8 @@ function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
+        // Limpiar la pantalla antes del menu de opciones
+        disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp("=================== Menu de opciones ===================")
         disp("1. Solución de ecuaciones no lineales")
@@ -1090,7 +1155,7 @@ function EcuacionesLineales()
     bPrimeraVez = %T
     while (iOpciones ~= 5)
         iOpciones = input("Ingresa la matrix, si deseas salir teclea 5")
-        if iOpciones ~= 5 then 
+        if iOpciones ~= 5 then
             dmatMatriz = LeeMatriz()
         end
         if iOpciones < 5 then
@@ -1122,7 +1187,9 @@ function EcuacionesLineales()
             disp("5. Salir")
             iOpciones = input(" Qué opción deseas (1-5) --> ")
 
-            if (iOpciones == 2) then
+            if (iOpciones == 1) then
+                Cramer(dmatValores)
+            elseif (iOpciones == 2) then
                 EliminacionGaussJordan(dmatValores)
             elseif (iOpciones == 3) then
                 EliminacionGaussiana(dmatValores)

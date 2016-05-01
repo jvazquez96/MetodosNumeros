@@ -31,8 +31,8 @@ Proyecto final de la clase de métodos numéricos
 
 ### Solución de ecuaciones lineales
 - [ ] Cramer
-    * [ ] Lo tenemos hecho
-    * [ ] Agregado al programa principal
+    * [X] Lo tenemos hecho
+    * [X] Agregado al programa principal
     * [ ] Probado y funcionando
 
 - [X] Eliminación Gaussiana
