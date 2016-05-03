@@ -5,14 +5,14 @@ clear
 // Programa final para la clase de métodos numéricos. Este programa
 // provee una compilación de soluciones para todos los métodos vistos
 // en clase:
+
+// TODO FUNCIONA PROFE
 //
 //  Autores:
 //      Jorge Vazquez
 //      Irvel Nduva
 //
-//  Fecha: /05/2016
-//  Version 1.0
-///////////////////////////////////////////////////////////////////////////
+m///////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -166,8 +166,6 @@ function [sArgDeff1, sArgDeff2] = LeeFuncion2(sNombreFuncion)
     // Establece los argumentos para declarar la funcion con deff
     sArgDeff1 = 'z=' + sNombreFuncion + '(x,y)'
     sArgDeff2 = sFunc
-    disp("sArgDeff1: " + sArgDeff1)
-    disp("sArgDeff2: " + sArgDeff2)
 endfunction
 
 
@@ -251,12 +249,12 @@ function Cramer(dmatValores)
     // Intercambia cada fila con la matriz aumentada y saca ese resultado
     for i = 1: iColumnas
         for j = 1: iRenglones
-            dmatCuadrada(i,j) = dmatValores(j, iAumentada)
+            dmatCuadrada(j, i) = dmatValores(j, iAumentada)
         end
         darrSol(i, 1) = det(dmatCuadrada) / dDetMat
         // Restaura el valor original de la columna
         for j = 1: iRenglones
-            dmatCuadrada(i,j) = dmatValores(j, i)
+            dmatCuadrada(j, i) = dmatValores(j, i)
         end
     end
 
@@ -644,7 +642,7 @@ endfunction
 //      sArgDeff2: El segundo argumento para deff
 //
 /////////////////////////////////////////////////////////////////////
-function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
+function IteraSecante(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1,sArgDeff2)
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
 
@@ -704,7 +702,8 @@ function [dXPrev, dXAct, dErrAbsMeta, iMaxIter] = leeDatosSecante()
     // absoluto en valor porcentual y el numero maximo de iteraciones
     dXPrev = input("Ingrese el valor de X previo: ")
     dXAct = input("Ingrese el valor de X actual: ")
-    dErrAbsMeta = input("Ingrese el valor del error absoluto: ")
+    dErrAbsMeta = input("Ingrese el valor del error absoluto porcentual: ")
+    dErrAbsMeta = dErrAbsMeta / 100
     iMaxIter = input("Ingrese el valor máximo de iteraciones: ")
 
 endfunction
@@ -770,7 +769,7 @@ endfunction
 //
 /////////////////////////////////////////////////////////////////////
 
-function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
+function IteraBiseccion(dXPrev,dXAct,dErrAbsMeta,iMaxIter,sArgDeff1, sArgDeff2)
 
     dEval = EvaluaBiseccion(dXPrev)
     // Inicializa el valor del error de aproximación con un valor muy grande
@@ -786,7 +785,8 @@ function IteraBiseccion(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDef
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
 
-        // Se inicializa la variable con el valor promedio entre el promedio de los datos
+        // Se inicializa la variable con el valor promedio entre el promedio
+        // de los datos
         dEval = EvaluaBiseccion((dXPrev + dXAct) / 2)
 
         // Se obtiene el valor de la X inicial evaluada en la función
@@ -872,8 +872,10 @@ function [dXSiguiente] = SiguienteRegula(dXPrev, dXAct)
     deff(sArgDeff1, sArgDeff2)
     dPrimerValor = FuncionRegulaFalsi(dXPrev)
     dSegundoValor = FuncionRegulaFalsi(dXAct)
-    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor - dSegundoValor)
+    dXSiguiente = (dXAct*dPrimerValor - dXPrev*dSegundoValor) / (dPrimerValor...
+    - dSegundoValor)
 endfunction
+
 
 /////////////////////////////////////////////////////////////////////
 //  EvaluaRegula
@@ -922,7 +924,8 @@ function IteraRegula(dXPrev, dXAct, dErrAbsMeta, iMaxIter, sArgDeff1, sArgDeff2)
     // límite
     while(((iIterAct < iMaxIter) & (dErrAbsAct > dErrAbsMeta) & (dEval ~= 0.0)))
 
-        // Se inicializa la variable con el valor promedio entre el promedio de los datos
+        // Se inicializa la variable con el valor promedio entre el promedio de
+        //los datos
         dSiguienteX = SiguienteRegula(dXPrev,dXAct)
 
         //Se guarda el valor previo
@@ -1074,7 +1077,7 @@ function IteraNewtonRaphson(iInicio, dErrAbsMeta, iMaxIter)
             iNueva = iSiguiente(iViejo)
             disp("Valor nuevo: " + string(iNueva))
             dErrAbsAct = iErrorAprox(iViejo,iNueva)
-            disp("Error aproximado: " + string(dErrAbsAct))
+            disp("Error aproximado: " + string(dErrAbsAct*100) + "%")
             iRaiz = FuncionRaphson(iNueva);
         end
 
@@ -1102,7 +1105,8 @@ function [dXInicio, dErrAbsMeta, iMaxIter] = LeeDatosRaphson()
     // Solicita el valor inicial para x previa y x actual, el error
     // absoluto en valor porcentual y el numero maximo de iteraciones
     dXInicio = input("Ingrese el valor de X previo: ")
-    dErrAbsMeta = input("Ingrese el valor del error absoluto: ")
+    dErrAbsMeta = input("Ingrese el valor del error absoluto porcentual: ")
+    dErrAbsMeta = dErrAbsMeta / 100
     iMaxIter = input("Ingrese el valor máximo de iteraciones: ")
 
 endfunction
@@ -1137,7 +1141,8 @@ function [dmatValores] = leeDatosRegresion()
     iCantidad = input("¿Cuantos datos? ")
     for i = 1:iCantidad
         for j = 1: 2
-            dmatValores(i,j) = input("Introduzca el dato para la casilla " + string(i) + string(j))
+            sMensaje = "Introduzca el dato para la casilla " + string(i) + " "
+            dmatValores(i,j) = input(sMensaje + string(j) + ": ")
         end
     end
 
@@ -1146,7 +1151,8 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 //  sumatoria(dMat,iTipo)
 //
-//  Funcion que calcula la sumatoria depiendo de la que se requiere de los datos de una matriz
+//  Funcion que calcula la sumatoria depiendo de la que se requiere
+//  de los datos de una matriz
 //
 //  Parametros:
 //  dmatValores = Matriz de donde se obtienen los datos
@@ -1170,7 +1176,7 @@ function dSum = sumatoria(dmatValores,iTipo)
     elseif iTipo == 2 then
         for i = 1: iRenglones
             dSum = dSum + (dmatValores(i,1)*dmatValores(i,1))
-        end 
+        end
     //Suma de los valores de log(x)
     elseif iTipo == 3 then
         for i = 1: iRenglones
@@ -1540,8 +1546,8 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   iDet(dmatValores,iX,iY)
-// 
-//  Función que saca el determinante de una matriz de un valor de la matriz 
+//
+//  Función que saca el determinante de una matriz de un valor de la matriz
 //
 //  Parametros:
 //     dmatValores
@@ -1605,7 +1611,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //  Transpose(dmatMatrix)
-// 
+//
 //  Función que saca la matriz transpuesta de una matriz
 //
 //  Parametros:
@@ -1632,7 +1638,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   GetDeterminante(dmatMatrix)
-// 
+//
 //  Función que saca el determinante inverso de una matriz
 //
 //  Parametros:
@@ -1647,7 +1653,7 @@ endfunction
 
 /////////////////////////////////////////////////////////////////////
 //   InversaCofactores(dmatValores,iDeterminante)
-// 
+//
 //
 //  Función que saca la matriz inversa de una matriz a través de la formula:
 //  Inversa: 1/determinante de la matriz * (Matriz de cofactores)
@@ -1691,7 +1697,8 @@ endfunction
 //
 ///////////////////////////////////////////////////////////////////////////
 
-function IteraNewton(iTeraciones, darrX, sArgDeff1,sArgDeff2,sArgDeff3,sArgDeff4,sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,sArgDeff11,sArgDeff12)
+function IteraNewton(iTeraciones, darrX, sArgDeff1,sArgDeff2,sArgDeff3,...
+    sArgDeff4,sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,sArgDeff11,sArgDeff12)
     //Declara la función a ser resuelta
     deff(sArgDeff1, sArgDeff2)
     deff(sArgDeff3, sArgDeff4)
@@ -1700,7 +1707,9 @@ function IteraNewton(iTeraciones, darrX, sArgDeff1,sArgDeff2,sArgDeff3,sArgDeff4
     deff(sArgDeff9, sArgDeff10)
     deff(sArgDeff11,sArgDeff12)
     iVal = sOriginal1(1,2)
-    disp("iVal: " + string(iVal))
+    sTitulo = "Solucion de ecuación no lineal para " + string(iTeraciones)
+    sTitulo = sTitulo + " iTeraciones"
+    disp("---------- " + sTitulo + " ----------")
     for i = 1: iTeraciones
         J = [sParcialX1(darrX(1),darrX(2)), sParcialY1(darrX(1),darrX(2)); sParcialX2(darrX(1),darrX(2)), sParcialY2(darrX(1),darrX(2))]
         F = [sOriginal1(darrX(1),darrX(2)); sOriginal2(darrX(1),darrX(2))]
@@ -1717,8 +1726,10 @@ endfunction
 /////////////////////////////////////////////////////////////////////
 
 function LeeDatosNewton()
-    dX(1) = input("Introduzca la x: ")
-    dX(2) = input("Introduzca la y: ")
+    darrX(1) = input("Introduzca la x0: ")
+    darrX(2) = input("Introduzca la y0: ")
+    disp("Introduzca la cantidad de iteraciones que quiere ")
+    iIteraciones = input("--> ")
     disp("Introduzca la primera equación")
     [sArgDeff1, sArgDeff2] = LeeFuncion2("sOriginal1")
     disp("Introduzca la segunda equación" )
@@ -1731,7 +1742,9 @@ function LeeDatosNewton()
     [sArgDeff9, sArgDeff10] = LeeFuncion2("sParcialX2")
     disp("Introduzca la derivada parcial con respecto a Y de la segunda ecuacuón")
     [sArgDeff11, sArgDeff12] = LeeFuncion2("sParcialY2")
-    IteraNewton(1,dX,sArgDeff1,sArgDeff2,sArgDeff3,sArgDeff4,sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,sArgDeff11,sArgDeff12)
+    IteraNewton(iIteraciones, darrX, sArgDeff1, sArgDeff2, sArgDeff3,...
+     sArgDeff4, sArgDeff5,sArgDeff6,sArgDeff7,sArgDeff8,sArgDeff9,sArgDeff10,...
+     sArgDeff11,sArgDeff12)
 
 
 endfunction
@@ -1741,11 +1754,12 @@ endfunction
 //  Pide datos y se llena la matriz que se encuentra su integral
 //
 /////////////////////////////////////////////////////////////////////
-
 function CalculaNewton()
 // Leer datos iniciales
     LeeDatosNewton()
 endfunction
+
+
 ///////////////////////////////////////////////////////////////////////////
 //     divisionSitentica(darrCoeficientes,dFactor,dCantidad)
 //
@@ -1797,7 +1811,7 @@ function IteracionVieta(darrDatos,dFactor, dCantidad,dIteraciones)
         if dIteracionesActuales <> 0 then
             disp("Iteracion: " + string(dIteracionesActuales))
             disp("Factor: " + string(dFactor))
-            disp("Error: " + string(abs(dFactor-dFactorPrevio) / abs(dFactor)))
+            disp("Error: " + string(CalculaErrAbs(dFactorPrevio, dFactor)))
         else
             disp("Iteracion: " + string(dIteracionesActuales))
             disp("Factor: " + string(dFactor))
@@ -1829,7 +1843,7 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 // Birge Vieta
 //
-//  Programa que encuentra la raiz de una ecuación por el metodo de 
+//  Programa que encuentra la raiz de una ecuación por el metodo de
 //  Birge Vieta
 //
 // version 1.0
@@ -1838,7 +1852,7 @@ endfunction
 ///////////////////////////////////////////////////////////////////////////
 // CalculaVieta()
 //
-//  Funcion que manda a inicializar todos los valores necesarios para el 
+//  Funcion que manda a inicializar todos los valores necesarios para el
 //  metodo de Birge Vieta
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -1847,13 +1861,19 @@ function CalculaVieta()
 endfunction
 
 
-////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+//  Menu()
+//
+//  Muestra el menú de opciones principal
+//
+/////////////////////////////////////////////////////////////////////
 function Menu()
     //Inicializar variables
     iOpciones = 0
     while (iOpciones ~= 6)
         // Limpiar la pantalla antes del menu de opciones
+        disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp(ascii(10) + ascii(10) + ascii(10) + ascii(10) + ascii(10))
         disp("=================== Menu de opciones ===================")
@@ -1884,6 +1904,13 @@ function Menu()
 endfunction
 
 
+
+/////////////////////////////////////////////////////////////////////
+//  EcuacionesNoLineales()
+//
+//  Muestra el menú de opciones para los métodos de Ecuaciones no Lineales
+//
+/////////////////////////////////////////////////////////////////////
 function EcuacionesNoLineales()
     iOpciones = 0
     while(iOpciones  ~=  6)
@@ -1912,6 +1939,13 @@ function EcuacionesNoLineales()
 endfunction
 
 
+
+/////////////////////////////////////////////////////////////////////
+//  EcuacionesLineales()
+//
+//  Muestra el menú de opciones para los métodos de Ecuaciones Lineales
+//
+/////////////////////////////////////////////////////////////////////
 function EcuacionesLineales()
     iOpciones = 0
     bPrimeraVez = %T
@@ -1961,6 +1995,12 @@ function EcuacionesLineales()
 endfunction
 
 
+/////////////////////////////////////////////////////////////////////
+//  AjusteDeCurvas()
+//
+//  Muestra el menú de opciones para los métodos de Ajuste De Curvas
+//
+/////////////////////////////////////////////////////////////////////
 function AjusteDeCurvas()
     iOpciones = 0
     while (iOpciones ~= 5)
@@ -1974,7 +2014,7 @@ function AjusteDeCurvas()
         disp("3. Regresión Potencial")
         disp("4. Inversa por Cofactores")
         disp("5. Salir")
-        iOpciones = input(" Qué opción deseas (1-6) --> ")
+        iOpciones = input(" Qué opción deseas (1-5) --> ")
         if iOpciones == 1 then
             RegresionLineal()
         elseif iOpciones == 2 then
@@ -1989,6 +2029,12 @@ function AjusteDeCurvas()
 endfunction
 
 
+/////////////////////////////////////////////////////////////////////
+//  Interpolacion()
+//
+//  Muestra el menú de opciones para los métodos de Interpolacion
+//
+/////////////////////////////////////////////////////////////////////
 function Interpolacion()
     iOpciones = 0
     bPrimeraVez = %T
@@ -2028,32 +2074,15 @@ function Interpolacion()
 endfunction
 
 
+/////////////////////////////////////////////////////////////////////
+//  Integracion()
+//
+//  Muestra el menú de opciones para los métodos de integración
+//
+/////////////////////////////////////////////////////////////////////
 function Integracion()
     iOpciones = 0
-    bPrimeraVez = %T
     while (iOpciones ~= 4)
-        sMensaje = ""
-        // Desplegar un mensaje diferente para la segunda vez que entre
-        if(bPrimeraVez == %T)
-            sMensaje = "Presiona enter para ingresar una función a integrar "
-        else
-            sMensaje = "Presiona 1 si deseas ingresar una función diferente,"
-            sMensaje = sMensaje + ascii(10) + "2 "
-            sMensaje = sMensaje + "si deseas usar la función anterior de nuevo "
-        end
-        iOpciones = input(sMensaje +  "3 si quieres ir direectamente al menu, 4 si deseas regresar --> ")
-        if(iOpciones == 4)
-            break
-        end
-        // Para permitir al usuario ingresadr una matriz en todos los casos
-        // En la primera vez, forzosamente se tiene que leer la matriz
-        // o checar si quiere ir directamente al metodo de Newton-Rapson
-        if(iOpciones ~= 4 & iOpciones ~= 2 | bPrimeraVez) then
-            if (iOpciones ~= 3) then
-                [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
-            end
-        end
-        bPrimeraVez = %F
         disp(ascii(10) + ascii(10))
         sTitulo = "Integración"
         disp("================ " + sTitulo + " ================")
@@ -2061,10 +2090,13 @@ function Integracion()
         disp("2. Simpson 1/3")
         disp("3. Newton-Rapson para ecuaciones no lineales")
         disp("4. Salir")
+        disp(ascii(10))
         iOpciones = input(" Qué opción deseas (1-4) --> ")
         if iOpciones == 1 then
+            [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
             IntegraTrapecios(dA, dB, iN, sArgDeff1, sArgDeff2)
         elseif iOpciones == 2 then
+            [dA, dB, iN, sArgDeff1, sArgDeff2] = leeDatosIntegracion()
             IntegraSimpson(dA, dB, iN, sArgDeff1, sArgDeff2)
         elseif iOpciones == 3 then
             CalculaNewton()
@@ -2074,4 +2106,7 @@ function Integracion()
 endfunction
 
 
+
+////////////////////////   PROGRAMA PRINCIPAL   ///////////////////////////
+// Manda llamara al menu pricipal
 Menu()
